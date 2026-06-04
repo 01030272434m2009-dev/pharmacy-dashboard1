@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المستخدمين والصلاحيات - VeterinaryPharmacyClean3</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .user-card {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .username {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .badge-admin { background: #e74c3c; color: #fff; }
+        .badge-active { background: #2ecc71; color: #fff; }
+        .badge-inactive { background: #95a5a6; color: #fff; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .perm-item {
+            background: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            border-right: 4px solid #3498db;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .perm-item.disabled {
+            border-right-color: #e74c3c;
+            opacity: 0.6;
+        }
+        .sub-buttons-title {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        .buttons-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .btn-tag {
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            border: 1px solid #b3e5fc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📋 إدارة صلاحيات مستخدمي الصيدلية المزامنة</h2>
+    <div id="usersContainer">جاري تحميل بيانات المستخدمين من المزامنة السحابية...</div>
+</div>
+
+<script>
+    // جلب البيانات من ملف data.json المحدث بواسطة برنامج الـ WinForms
+    fetch('data.json')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = '';
+
+            if(!data.users || data.users.length === 0) {
+                container.innerHTML = '<p>لا توجد بيانات مستخدمين مسجلة حالياً.</p>';
+                return;
+            }
+
+            data.users.forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'user-card';
+
+                // تجهيز شارات الحالة والدور
+                const roleBadge = user.Role === 'Admin' ? `<span class="badge badge-admin">مدير نظام</span>` : `<span class="badge" style="background:#34495e; color:#fff;">${user.Role}</span>`;
+                const statusBadge = user.IsActive ? `<span class="badge badge-active">نشط</span>` : `<span class="badge badge-inactive">غير نشط</span>`;
+
+                // بناء كود الصلاحيات الأساسية
+                let permsHTML = '';
+                const p = user.Permissions;
+                const permLabels = {
+                    Items: 'إدارة الأصناف', Sales: 'المبيعات والافتتاحي', Invoices: 'الفواتير',
+                    Reports: 'التقارير الشاملة', Users: 'إدارة المستخدمين', Settings: 'الإعدادات والأسعار'
+                };
+
+                for (const [key, label] of Object.entries(permLabels)) {
+                    const isAllowed = p[key];
+                    permsHTML += `
+                        <div class="perm-item ${isAllowed ? '' : 'disabled'}">
+                            ${isAllowed ? '✅' : '❌'} ${label}
+                        </div>
+                    `;
+                }
+
+                // بناء مصفوفة الأزرار التفصيلية المتقدمة المسموح بها
+                let buttonsHTML = '';
+                if(p.AllowedSubButtons && p.AllowedSubButtons.length > 0) {
+                    p.AllowedSubButtons.forEach(btn => {
+                        buttonsHTML += `<span class="btn-tag">${btn}</span>`;
+                    });
+                } else {
+                    buttonsHTML = '<span style="color:#e74c3c; font-size:0.9rem;">لا توجد أزرار تفصيلية مخصصة</span>';
+                }
+
+                card.innerHTML = `
+                    <div class="user-header">
+                        <div class="username">👤 ${user.UserName}</div>
+                        <div>
+                            ${roleBadge}
+                            ${statusBadge}
+                        </div>
+                    </div>
+                    <div class="grid">
+                        ${permsHTML}
+                    </div>
+                    <div class="sub-buttons-title">🔘 الأزرار والشاشات الفرعية النشطة بالـ WinForms:</div>
+                    <div class="buttons-list">
+                        ${buttonsHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(error => {
+            document.getElementById('usersContainer').innerHTML = 
+                `<p style="color:#e74c3c;">فشل تحميل ملف data.json. تأكد من رفعه في نفس مسار الصفحة على GitHub.</p>`;
+            console.error('Error fetching JSON:', error);
+        });
+</script>
+
+</body>
+</html>
