@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 نظام إدارة المخازن المتعددة المتطور - د. أحمد</title>
+    <style>
+        /* 🎨 لوحة الألوان الجديدة المحدثة (أعمق، أنعم، ومريحة جداً للعين) */
+        :root {
+            --color-bg-window: #dce0e6;       /* خلفية النافذة أغمق بدرجة ناعمة */
+            --color-bg-panels: #ebeff5;       /* لوحات جانبية وعلوية داكنة ومتناسقة */
+            --color-border: #c3cbd6;          /* حدود أنعم وأوضح نسبياً */
+            --color-text-primary: #212f3d;    /* نصوص داكنة فخمة وسهلة القراءة */
+            --color-text-muted: #6e7885;      /* نصوص ثانوية هادئة */
+            
+            /* ألوان الهوية البصرية العميقة والناعمة */
+            --color-accent-blue: #2980b9;     /* أزرق ملكي عميق */
+            --color-accent-green: #27ae60;    /* أخضر داكن مريح */
+            --color-accent-orange: #d35400;   /* برنتقالي خريفي ناعم */
+            --color-accent-red: #c0292b;      /* أحمر دافئ هادئ للحذف والنواقص */
+            --color-accent-red-muted: #aa1e20;/* أحمر داكن للزر التدميري */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--color-bg-window);
+            color: var(--color-text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 🔼 الشريط العلوي (Top Panel) */
+        header {
+            height: 70px;
+            background-color: var(--color-bg-panels);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            border-bottom: 1px solid var(--color-border);
+            z-index: 10;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* 📋 الجزء الرئيسي للمحتوى */
+        .app-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 70px);
+            position: relative;
+        }
+
+        /* 📑 القائمة الجانبية (Side Panel) */
+        aside {
+            width: 260px;
+            background-color: var(--color-bg-panels);
+            border-left: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        aside.hidden {
+            width: 0;
+            overflow: hidden;
+            border-left: none;
+        }
+
+        /* 📄 منطقة العمل الرئيسية (Main Panel) */
+        main {
+            flex: 1;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        /* 🎛️ الأزرار وتصميمها (Modern Flat Controls) */
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-toggle {
+            font-size: 20px;
+            background: none;
+            color: var(--color-text-primary);
+        }
+        .btn-blue { background-color: var(--color-accent-blue); color: white; }
+        .btn-green { background-color: var(--color-accent-green); color: white; }
+        .btn-orange { background-color: var(--color-accent-orange); color: white; }
+        .btn-red { background-color: var(--color-accent-red); color: white; }
+        .btn-dark-red { background-color: var(--color-accent-red-muted); color: white; }
+        .btn-window { 
+            background-color: var(--color-bg-window); 
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-side {
+            width: 100%;
+            height: 50px;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-accent-blue);
+            text-align: right;
+            padding: 0 15px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .btn-side:hover {
+            background-color: rgba(0,0,0,0.03);
+        }
+        .btn-side.main-wh {
+            color: var(--color-text-primary);
+        }
+        .btn-side.add-item-wh {
+            color: var(--color-accent-green);
+        }
+
+        /* 🏷️ العناوين والمؤشرات */
+        .content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .main-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--color-text-primary);
+        }
+
+        .badge-total {
+            background-color: var(--color-accent-blue);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* 🔍 حقل البحث */
+        .search-container {
+            width: 380px;
+            max-width: 100%;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 15px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            outline: none;
+            color: var(--color-text-primary);
+        }
+        .search-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        /* 📊 جدول البيانات المتطور (DataGridView) */
+        .table-container {
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            flex: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--color-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 15px;
+        }
+
+        th {
+            background-color: #d7dee9;
+            color: var(--color-text-primary);
+            font-weight: bold;
+            padding: 12px 15px;
+            height: 40px;
+        }
+
+        td {
+            padding: 10px 15px;
+            height: 38px;
+            border-bottom: 1px solid #e1e6ee;
+            color: var(--color-text-primary);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f5f8fc;
+        }
+
+        /* ⚠️ تنسيق النواقص تلقائياً كشرط الجريد الفيجوال */
+        tr.shortage {
+            background-color: #fee6e6 !important;
+            color: var(--color-accent-red) !important;
+        }
+        tr.shortage td {
+            color: var(--color-accent-red) !important;
+        }
+
+        .btn-table-edit {
+            background-color: var(--color-accent-blue);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        /* 🛠️ شاشات الإدخال المنبثقة (Dialog Forms) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active { display: flex; }
+        
+        .modal-content {
+            background-color: #ebdff5; /* لون متناسق مع الحوار */
+            background-color: var(--color-bg-panels);
+            width: 420px;
+            max-width: 90%;
+            padding: 25px;
+            border-radius: 5px;
+            border: 1px solid var(--color-border);
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--color-text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-actions">
+            <button class="btn btn-toggle" id="btnToggleSide">☰</button>
+            <div style="display: flex; gap: 8px;" id="topButtonsFlowPanel">
+                <button class="btn btn-green" onclick="openModal('addAssetModal')">➕ إضافة صنف</button>
+                <button class="btn btn-red" onclick="alert('حذف صنف فرعي...')">🗑️ حذف صنف</button>
+                <button class="btn btn-dark-red" id="btnTemporaryDeleteWarehouse">⚠️ حذف المخزن كاملاً (60ث)</button>
+                <button class="btn btn-blue" onclick="alert('واجهة التحكم بالفئات...')">🎛️ التحكم بالفئات</button>
+                <button class="btn btn-window" onclick="openModal('createWhModal')">🏬 مخزن جديد</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        
+        <main>
+            <div class="content-header">
+                <div class="main-title" id="lblWarehouseTitle">📋 إدارة محتويات | صالة العرض</div>
+                <div class="badge-total" id="lblTotalQuantity">إجمالي القطع المتوفرة: 0 وحدة</div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" id="txtSearch" placeholder="🔍 ابحث هنا باسم الصنف أو الكود...">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>كود</th>
+                            <th>اسم الصنف</th>
+                            <th>كمية</th>
+                            <th>سعر شراء</th>
+                            <th>سعر تجزئة</th>
+                            <th>سعر جملة</th>
+                            <th>فئة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dgvWarehouseItems">
+                        </tbody>
+                </table>
+            </div>
+
+            <div>
+                <button class="btn btn-orange" id="btnBottomTransfer" style="display:none;" onclick="alert('نقل صنف إلى مخزن آخر...')">🔄 نقل صنف لمخزن آخر</button>
+            </div>
+        </main>
+
+        <aside id="sidePanel">
+            <button class="btn-side add-item-wh" onclick="openModal('addAssetModal')">➕ إضافة صنف لمخزن فرعي</button>
+            <button class="btn-side main-wh" onclick="switchWarehouse('صالة العرض')"> عرض محتويات صالة العرض</button>
+            <div id="dynamicWhButtons">
+                </div>
+        </aside>
+    </div>
+
+    <div class="modal" id="createWhModal">
+        <div class="modal-content">
+            <div class="modal-title">🏬 تأسيس مخزن جديد</div>
+            <div class="form-group">
+                <label style="display:block; margin-bottom:8px; font-weight:bold;">يرجى إدخال اسم المخزن الفرعي الجديد:</label>
+                <input type="text" id="txtNewWhName" class="form-control">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-blue" onclick="createWarehouseAction()">💾 حفظ وتأسيس</button>
+                <button class="btn btn-window" onclick="closeModal('createWhModal')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="addAssetModal">
+        <div class="modal-content">
+            <div class="modal-title">➕ إضافة صنف جديد للمخزن</div>
+            <div class="form-group">
+                <input type="text" id="txtItemName" class="form-control" placeholder="اسم الصنف">
+            </div>
+            <div class="form-group">
+                <input type="number" id="txtItemQty" class="form-control" placeholder="الكمية">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-green" onclick="addItemAction()">➕ إضافة</button>
+                <button class="btn btn-window" onclick="closeModal('addAssetModal')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // داتا افتراضية تحاكي الداتا المحملة من السيكولايت SQLite
+        let defaultMasterItems = [
+            { code: "1000001", name: "بانادول بيطري سائل", quantity: 15, buyPrice: 50, sellRetail: 70, sellWholesale: 65, category: "مضادات حيوية" },
+            { code: "1000002", name: "فيتامين ج مركّز سوبر", quantity: 3, buyPrice: 120, sellRetail: 160, sellWholesale: 145, category: "فيتامينات" },
+            { code: "1000003", name: "مضاد سموم بيولوجي فخم", quantity: 24, buyPrice: 85, sellRetail: 110, sellWholesale: 100, category: "إضافات أعلاف" }
+        ];
+
+        // تحميل البيانات من الـ LocalStorage أو استخدام الافتراضية
+        let warehouses = JSON.parse(localStorage.getItem('warehouses')) || {
+            "صالة العرض": [...defaultMasterItems],
+            "مخزن الطوارئ الفرعي": [
+                { code: "1000001", name: "بانادول بيطري سائل", quantity: 2, buyPrice: 50, sellRetail: 70, sellWholesale: 65, category: "مضادات حيوية" },
+                { code: "1000002", name: "فيتامين ج مركّز سوبر", quantity: 12, buyPrice: 120, sellRetail: 160, sellWholesale: 145, category: "فيتامينات" },
+                { code: "1000003", name: "مضاد سموم بيولوجي فخم", quantity: 0, buyPrice: 85, sellRetail: 110, sellWholesale: 100, category: "إضافات أعلاف" }
+            ]
+        };
+
+        let currentWarehouseName = "صالة العرض";
+
+        // ⏳ أدوات المؤقت لحذف المخزن بالكامل (60 ثانية)
+        let secondsRemaining = 60;
+        const btnDeleteWh = document.getElementById('btnTemporaryDeleteWarehouse');
+        
+        let disposableTimer = setInterval(() => {
+            secondsRemaining--;
+            if (secondsRemaining > 0) {
+                if (btnDeleteWh) btnDeleteWh.innerText = `⚠️ حذف المخزن كاملاً (${secondsRemaining}ث)`;
+            } else {
+                clearInterval(disposableTimer);
+                if (btnDeleteWh) btnDeleteWh.remove();
+            }
+        }, 1000);
+
+        // إعداد الحدث لزر تدمير المخزن
+        btnDeleteWh.onclick = function() {
+            if (currentWarehouseName === "صالة العرض") {
+                alert("لا يمكن حذف صالة العرض الافتراضية للنظام! يمكنك فقط حذف المخازن الفرعية المستحدثة.");
+                return;
+            }
+            if (confirm(`⚠️ تحذير صارم: هل أنت متأكد تماماً من رغبتك في حذف مخزن (${currentWarehouseName}) بالكامل بجميع محتوياته نهائياً من السيستم؟\n\nلا يمكن التراجع عن هذا الإجراء لاحقاً!`)) {
+                delete warehouses[currentWarehouseName];
+                saveData();
+                renderWarehouseButtons();
+                switchWarehouse("صالة العرض");
+                clearInterval(disposableTimer);
+                btnDeleteWh.remove();
+            }
+        };
+
+        // فتح وإغلاق النوافذ المنبثقة
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // إنشاء مخزن فرعي جديد
+        function createWarehouseAction() {
+            const nameInput = document.getElementById('txtNewWhName');
+            const name = nameInput.value.trim();
+            if (!name) { alert("برجاء كتابة اسم المخزن أولاً ولا تتركه فارغاً."); return; }
+            if (warehouses[name]) { alert("عذراً، هذا المخزن مؤسس وموجود بالفعل!"); return; }
+
+            // نسخ الأصناف بكميات صفرية كما في كود السي شارب تماماً
+            warehouses[name] = defaultMasterItems.map(i => ({...i, quantity: 0}));
+            saveData();
+            renderWarehouseButtons();
+            closeModal('createWhModal');
+            nameInput.value = '';
+            switchWarehouse(name);
+        }
+
+        // إضافة صنف سريع للمخزن الحالي
+        function addItemAction() {
+            const name = document.getElementById('txtItemName').value.trim();
+            const qty = parseFloat(document.getElementById('txtItemQty').value) || 0;
+            if(!name) return;
+
+            let code = "10000" + (Object.keys(warehouses[currentWarehouseName]).length + 1);
+            warehouses[currentWarehouseName].push({
+                code: code, name: name, quantity: qty, buyPrice: 10, sellRetail: 15, sellWholesale: 12, category: "عام"
+            });
+            saveData();
+            switchWarehouse(currentWarehouseName);
+            closeModal('addAssetModal');
+            document.getElementById('txtItemName').value = '';
+            document.getElementById('txtItemQty').value = '';
+        }
+
+        function saveData() {
+            localStorage.setItem('warehouses', JSON.stringify(warehouses));
+        }
+
+        // عرض قائمة أزرار المخازن الجانبية
+        function renderWarehouseButtons() {
+            const container = document.getElementById('dynamicWhButtons');
+            container.innerHTML = '';
+            Object.keys(warehouses).forEach(wh => {
+                if (wh !== "صالة العرض") {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-side';
+                    btn.innerText = `📦 ${wh}`;
+                    btn.onclick = () => switchWarehouse(wh);
+                    container.appendChild(btn);
+                }
+            });
+        }
+
+        // التبديل بين المخازن وتحديث الجريد (DataGrid)
+        function switchWarehouse(name) {
+            currentWarehouseName = name;
+            document.getElementById('lblWarehouseTitle').innerText = `📋 إدارة محتويات | ${name}`;
+            
+            // زر النقل يظهر فقط في المخازن الفرعية
+            document.getElementById('btnBottomTransfer').style.display = (name === "صالة العرض") ? "none" : "block";
+
+            renderTable(warehouses[name] || []);
+        }
+
+        // بناء الجدول والتحقق من النواقص (Formatting Row Condition)
+        function renderTable(items) {
+            const tbody = document.getElementById('dgvWarehouseItems');
+            tbody.innerHTML = '';
+
+            let totalQty = 0;
+
+            items.forEach(item => {
+                totalQty += item.quantity;
+                const tr = document.createElement('tr');
+                
+                // شرط التلوين الفيجوال للنواقص (الكمية <= 5)
+                if (item.quantity <= 5) {
+                    tr.className = 'shortage';
+                }
+
+                tr.innerHTML = `
+                    <td>${item.code}</td>
+                    <td>${item.name}</td>
+                    <td>${item.quantity} وحدة</td>
+                    <td>${item.buyPrice} ج.م</td>
+                    <td>${item.sellRetail} ج.م</td>
+                    <td>${item.sellWholesale} ج.م</td>
+                    <td>${item.category}</td>
+                    <td><button class="btn-table-edit" onclick="alert('تعديل الصنف: ${item.name}')">✏️ تعديل</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('lblTotalQuantity').innerText = `إجمالي القطع المتوفرة: ${totalQty} وحدة`;
+        }
+
+        // محرك البحث الفوري (Real-time Search Filter)
+        document.getElementById('txtSearch').oninput = function() {
+            let filter = this.value.toLowerCase();
+            let currentItems = warehouses[currentWarehouseName] || [];
+            let filtered = currentItems.filter(i => i.name.toLowerCase().includes(filter) || i.code.includes(filter));
+            renderTable(filtered);
+        };
+
+        // شريط القائمة الجانبية المتقلص (Toggle Side Panel)
+        document.getElementById('btnToggleSide').onclick = function() {
+            document.getElementById('sidePanel').classList.toggle('hidden');
+        };
+
+        // الإقلاع الابتدائي للمنظومة الويب
+        renderWarehouseButtons();
+        switchWarehouse("صالة العرض");
+    </script>
+</body>
+</html>
