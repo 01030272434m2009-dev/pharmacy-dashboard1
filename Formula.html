@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 محرك الدعم الطبي الذكي وإدارة التركيبات العلاجية الموحدة</title>
+    <style>
+        /* 🎨 بالت الألوان الفاتحة والناعمة والمريحة جداً للعين (Modern Light UI) بنفس أسلوب شاشات البرنامج */
+        :root {
+            --bg-main: #f3f4f6;       /* رمادي جليدي مريح */
+            --bg-card: #ffffff;       /* أبيض ناصع صافي */
+            --text-dark: #1f2937;     /* رمادي غامق جداً */
+            --text-muted: #6b7280;    /* نصوص فرعية هادئة */
+            
+            /* ألوان الأزرار والعناصر بنمط الباستيل الفاخر الهادئ */
+            --v-green: #287350;       /* أخضر زيتي هادئ */
+            --v-red: #a52a2a;         /* عنابي ناعم */
+            --v-blue: #2d559b;        /* أزرق رصين */
+            --v-dark: #4b5563;        /* رمادي مودرن */
+            --v-orange: #b4641e;      /* خردلي دافئ */
+            --v-teal: #0d9488;        /* تيل/تركواز عصري */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        /* الهيدر الفاتح العصري */
+        .header {
+            background-color: #ffffff;
+            padding: 20px 25px;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: var(--v-blue);
+            font-size: 22px;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--v-blue);
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+
+        .form-panel {
+            background-color: #fafafa;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #cbcbcb;
+            border-radius: 6px;
+            outline: none;
+            background-color: #ffffff;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            border-color: var(--v-blue);
+            box-shadow: 0 0 0 3px rgba(45, 85, 155, 0.15);
+        }
+
+        .row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* لوحة إضافة المكونات الفرعية */
+        .component-box {
+            background-color: #edf2f7;
+            border: 1px dashed var(--v-blue);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        /* جدول المكونات المطور */
+        .table-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-container {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: auto;
+            max-height: 350px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+            padding: 12px;
+            font-weight: bold;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        tr:hover { background-color: #f8fafc; }
+
+        /* أزرار الواجهة الفلات المودرن */
+        .btn {
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+            transition: opacity 0.15s;
+        }
+
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { background-color: #cbd5e1 !important; cursor: not-allowed; }
+
+        .btn-green { background-color: var(--v-green); }
+        .btn-red { background-color: var(--v-red); }
+        .btn-blue { background-color: var(--v-blue); }
+        .btn-dark { background-color: var(--v-dark); }
+        .btn-orange { background-color: var(--v-orange); }
+        .btn-teal { background-color: var(--v-teal); }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .total-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: var(--v-green);
+            font-size: 20px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🧪 محرك الدعم الطبي الذكي وإدارة التركيبات العلاجية الموحدة</h1>
+        <div class="form-group" style="margin-bottom: 0; flex-direction: row; align-items: center; gap: 10px;">
+            <label style="margin-bottom: 0; white-space: nowrap;">المخزن المزامَن:</label>
+            <select id="cbWarehouses" class="form-control" style="width: 180px;">
+                <option value="كل المخازن">كل المخازن</option>
+                <option value="المخزن الرئيسي">المخزن الرئيسي</option>
+                <option value="مخزن الحالات العاجلة">مخزن الحالات العاجلة</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        
+        <div class="form-panel">
+            <div class="section-title">📝 بيانات البروتوكول العلاجي والتركيبة</div>
+            
+            <div class="form-group">
+                <label>اسم التركيبة الطبية الحركية</label>
+                <input type="text" id="txtFormulaName" class="form-control" placeholder="مثال: تركيبة الكولستريديا المركبة">
+            </div>
+
+            <div class="row-grid">
+                <div class="form-group">
+                    <label>المرض المستهدف (محرك الذكاء)</label>
+                    <input type="text" id="cbTargetDisease" class="form-control" placeholder="اكتب المرض أو اختره..." list="diseasesList">
+                    <datalist id="diseasesList">
+                        <option value="كولستريديا الدواجن">
+                        <option value="سالمونيلا المجترات">
+                        <option value="كوكسيديا حادة">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label>الأعراض المصاحبة المقترحة</label>
+                    <input type="text" id="txtSymptoms" class="form-control" placeholder="اكتب الأعراض مفصولة بـ (،)...">
+                </div>
+            </div>
+
+            <div class="component-box">
+                <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; color: var(--v-blue);">💊 لوحة إضافة صنف طبي داخل التركيبة</div>
+                
+                <div class="row-grid">
+                    <div class="form-group">
+                        <label>الصنف الأساسي</label>
+                        <select id="compItem" class="form-control" onchange="updateUnitCost()">
+                            <option value="" data-cost="0" data-unit="جرام">-- اختر الصنف الأساسي --</option>
+                            <option value="كولستين بودرة" data-cost="1.5" data-unit="جرام">كولستين بودرة (جرام) - 1.5 ج.م</option>
+                            <option value="أموكسيسيلين 50%" data-cost="2.8" data-unit="جرام">أموكسيسيلين 50% (جرام) - 2.8 ج.م</option>
+                            <option value="فيتامين أد3هـ سائل" data-cost="0.9" data-unit="سم">فيتامين أد3هـ سائل (سم) - 0.9 ج.م</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الصنف البديل (عند النقص الشامل)</label>
+                        <select id="compAltItem" class="form-control">
+                            <option value="">-- اختر صنف بديل (اختياري) --</option>
+                            <option value="نيومايسين بودرة">نيومايسين بودرة</option>
+                            <option value="دوكسي سيكلين">دوكسي سيكلين</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-top: 10px;">
+                    <div class="form-group">
+                        <label>الدرجة والأهمية</label>
+                        <select id="compImportance" class="form-control">
+                            <option>1- مادة أساسية (لا يمكن الاستغناء عنها)</option>
+                            <option>2- مادة داعمة (مكمل ومقوي علاجي)</option>
+                            <option>3- مادة إضافية (حسب رغبة المربي)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الكمية المطلوبة</label>
+                        <input type="number" id="compQty" class="form-control" value="1" min="0.1" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>الوحدة / التكلفة</label>
+                        <input type="text" id="compUnitDisplay" class="form-control" readonly value="الوحدة: جرام" style="background:#e9ecef; font-weight:bold; text-align:center;">
+                    </div>
+                </div>
+
+                <div style="text-align: left; margin-top: 15px;">
+                    <button type="button" class="btn btn-teal" onclick="addComponentRow()">➕ إدراج المادة الطبية للجدول</button>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>طريقة التحضير، بروتوكول الجرعات والمحاذير الطبية</label>
+                <textarea id="txtNotes" class="form-control" rows="4" placeholder="اكتب هنا بروتوكول الجرعات، طريقة الخلط، أو المحاذير الطبية لتظهر تلقائياً للطبيب عند استدعاء التركيبة..."></textarea>
+            </div>
+        </div>
+
+        <div class="table-panel">
+            <div class="section-title">📊 المواد الطبية المدرجة حالياً بالتركيبة المعايرة</div>
+            
+            <div class="table-container">
+                <table id="componentsTable">
+                    <thead>
+                        <tr>
+                            <th>الصنف الأساسي</th>
+                            <th>الصنف البديل</th>
+                            <th>الأهمية والدرجة</th>
+                            <th>الكمية</th>
+                            <th>الوحدة</th>
+                            <th>التكلفة</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="total-box">
+                💰 إجمالي التكلفة الإنتاجية للتركيبة المعايرة: <span id="lblTotalCost">0.00</span> ج.م
+            </div>
+
+            <div class="action-bar">
+                <button type="button" id="btnSaveFormula" class="btn btn-green" onclick="saveFormula(false)">💾 حفظ كتركيبة جديدة</button>
+                <button type="button" id="btnUpdateFormula" class="btn btn-dark" onclick="saveFormula(true)" disabled>✏️ حفظ التعديلات الحالية</button>
+                <button type="button" id="btnDeleteFormula" class="btn btn-red" onclick="deleteFormula()" disabled>🗑️ حذف التركيبة نهائياً</button>
+                <button type="button" id="btnClearAll" class="btn btn-orange" onclick="resetFormulaForm()">🧹 تفريغ وإعادة ضبط</button>
+            </div>
+
+            <div class="form-panel" style="margin-top: 20px;">
+                <div class="section-title">📂 استدعاء وفحص تركيبات سابقة من السيرفر</div>
+                <div class="form-group" style="flex-direction: row; gap: 10px;">
+                    <select id="savedFormulasSelect" class="form-control" style="flex: 1;">
+                        <option value="">-- اختر تركيبة مسجلة مسبقاً --</option>
+                    </select>
+                    <button type="button" class="btn btn-blue" onclick="loadSelectedFormula()">📥 استدعاء للشاشة</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // مصفوفة لتخزين بنود التركيبة الحالية المعروضة بالجدول
+    let componentsList = [];
+    // قاعدة بيانات وهمية لمحاكاة ملف الـ JSON المزامَن على جيت هاب
+    let savedFormulasDB = [];
+    let currentFormulaId = null;
+
+    // تحديث نص الوحدة وتكلفة البند بمجرد تغيير الصنف المختبر
+    function updateUnitCost() {
+        const select = document.getElementById("compItem");
+        const selectedOption = select.options[select.selectedIndex];
+        const unit = selectedOption.getAttribute("data-unit") || "جرام";
+        document.getElementById("compUnitDisplay").value = `الوحدة: ${unit}`;
+    }
+
+    // إدراج مادة طبية جديدة إلى جدول البنود
+    function addComponentRow() {
+        const itemSelect = document.getElementById("compItem");
+        const itemName = itemSelect.value;
+        if (!itemName) {
+            alert("يرجى اختيار الصنف الأساسي أولاً");
+            return;
+        }
+
+        const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+        const unitCost = parseFloat(selectedOption.getAttribute("data-cost"));
+        const unit = selectedOption.getAttribute("data-unit");
+        
+        const altItem = document.getElementById("compAltItem").value;
+        const importance = document.getElementById("compImportance").value;
+        const qty = parseFloat(document.getElementById("compQty").value);
+
+        if (isNaN(qty) || qty <= 0) {
+            alert("يرجى إدخال كمية صحيحة أكبر من الصفر");
+            return;
+        }
+
+        // حساب التكلفة الاجمالية للبند الحالي
+        const totalCost = qty * unitCost;
+
+        // إضافة الكائن للمصفوفة الحركية
+        componentsList.push({
+            id: Date.now(), // معرف فريد للحذف
+            itemName: itemName,
+            altItemName: altItem || "---",
+            importanceLevel: importance,
+            qty: qty,
+            unit: unit,
+            totalCost: totalCost
+        });
+
+        renderComponentsTable();
+        // تصفير مدخلات البند المضاف لحماية البيانات وسرعة الحركة
+        itemSelect.selectedIndex = 0;
+        document.getElementById("compAltItem").selectedIndex = 0;
+        document.getElementById("compQty").value = "1";
+        document.getElementById("compUnitDisplay").value = "الوحدة: جرام";
+    }
+
+    // حذف بند من الجدول وإعادة حساب الحسابات
+    function removeComponentRow(id) {
+        componentsList = componentsList.filter(item => item.id !== id);
+        renderComponentsTable();
+    }
+
+    // رندر وتحديث جدول البيانات والـ Total الفوري
+    function renderComponentsTable() {
+        const tbody = document.querySelector("#componentsTable tbody");
+        tbody.innerHTML = "";
+        let overallCost = 0;
+
+        componentsList.forEach(item => {
+            overallCost += item.totalCost;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td style="font-weight: bold;">${item.itemName}</td>
+                <td style="color: var(--v-orange);">${item.altItemName}</td>
+                <td><small>${item.importanceLevel.split('-')[0]}</small></td>
+                <td style="font-weight: bold;">${item.qty}</td>
+                <td>${item.unit}</td>
+                <td style="color: var(--v-green); font-weight: bold;">${item.totalCost.toFixed(2)} ج.م</td>
+                <td><button type="button" class="btn btn-red" style="padding: 4px 8px; font-size: 11px;" onclick="removeComponentRow(${item.id})">🗑️</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById("lblTotalCost").innerText = overallCost.toFixed(2);
+    }
+
+    // حفظ أو تعديل التركيبة بالكامل ومزامنتها
+    function saveFormula(isUpdate) {
+        const formulaName = document.getElementById("txtFormulaName").value.trim();
+        const targetDisease = document.getElementById("cbTargetDisease").value.trim();
+        const symptoms = document.getElementById("txtSymptoms").value.trim();
+        const notes = document.getElementById("txtNotes").value.trim();
+        const totalCost = parseFloat(document.getElementById("lblTotalCost").innerText);
+
+        if (!formulaName) {
+            alert("يرجى كتابة اسم التركيبة الطبية أولاً.");
+            return;
+        }
+        if (componentsList.length === 0) {
+            alert("لا يمكن حفظ تركيبة فارغة بدون مواد طبية مدرجة!");
+            return;
+        }
+
+        if (isUpdate && currentFormulaId !== null) {
+            // وضع التعديل الحركي
+            const index = savedFormulasDB.findIndex(f => f.formula_id === currentFormulaId);
+            if (index !== -1) {
+                savedFormulasDB[index] = {
+                    formula_id: currentFormulaId,
+                    formula_name: formulaName,
+                    target_disease: targetDisease,
+                    associated_symptoms: symptoms,
+                    preparation_notes: notes,
+                    total_production_cost: totalCost,
+                    components: [...componentsList]
+                };
+                alert(`✔ تم حفظ التعديلات الحالية للتركيبة [ ${formulaName} ] بنجاح في قاعدة البيانات المزامنة.`);
+            }
+        } else {
+            // وضع الحفظ الجديد الشامل
+            const newId = Date.now();
+            savedFormulasDB.push({
+                formula_id: newId,
+                formula_name: formulaName,
+                target_disease: targetDisease,
+                associated_symptoms: symptoms,
+                preparation_notes: notes,
+                total_production_cost: totalCost,
+                components: [...componentsList]
+            });
+            alert(`✔ تم حفظ وتكويد التركيبة الجديدة [ ${formulaName} ] بنجاح وتحويلها لملف المزامنة السحابي.`);
+        }
+
+        updateSavedFormulasDropdown();
+        resetFormulaForm();
+    }
+
+    // استدعاء التركيبة المختارة من القائمة للشاشة وعكس البيانات بالكامل
+    function loadSelectedFormula() {
+        const select = document.getElementById("savedFormulasSelect");
+        const id = parseInt(select.value);
+        if (!id) return;
+
+        const formula = savedFormulasDB.find(f => f.formula_id === id);
+        if (!formula) return;
+
+        currentFormulaId = formula.formula_id;
+        document.getElementById("txtFormulaName").value = formula.formula_name;
+        document.getElementById("cbTargetDisease").value = formula.target_disease;
+        document.getElementById("txtSymptoms").value = formula.associated_symptoms;
+        document.getElementById("txtNotes").value = formula.preparation_notes;
+        
+        // تحميل مصفوفة المكونات
+        componentsList = [...formula.components];
+        renderComponentsTable();
+
+        // تعديل حالة أزرار الـ WinForms لتتوافق مع البنية الشجرية
+        document.getElementById("btnSaveFormula").disabled = true;
+        document.getElementById("btnUpdateFormula").disabled = false;
+        document.getElementById("btnDeleteFormula").disabled = false;
+    }
+
+    // حذف التركيبة بالكامل
+    function deleteFormula() {
+        if (currentFormulaId === null) return;
+        if (confirm("⚠️ تحذير: هل أنت متأكد من حذف هذه التركيبة نهائياً وبشكل شامل من السيرفر؟")) {
+            savedFormulasDB = savedFormulasDB.filter(f => f.formula_id !== currentFormulaId);
+            alert("✔ تم حذف التركيبة الطبية من السيرفر بنجاح.");
+            updateSavedFormulasDropdown();
+            resetFormulaForm();
+        }
+    }
+
+    // تحديث الكومبوبوكس الخاص بالتركيبات المسجلة مسبقاً
+    function updateSavedFormulasDropdown() {
+        const select = document.getElementById("savedFormulasSelect");
+        select.innerHTML = '<option value="">-- اختر تركيبة مسجلة مسبقاً --</option>';
+        savedFormulasDB.forEach(f => {
+            const opt = document.createElement("option");
+            opt.value = f.formula_id;
+            opt.innerText = f.formula_name;
+            select.appendChild(opt);
+        });
+    }
+
+    // تفريغ وإعادة ضبط شاشة الواجهة للوضع الافتراضي (Reset Form)
+    function resetFormulaForm() {
+        currentFormulaId = null;
+        document.getElementById("txtFormulaName").value = "";
+        document.getElementById("cbTargetDisease").value = "";
+        document.getElementById("txtSymptoms").value = "";
+        document.getElementById("txtNotes").value = "";
+        
+        componentsList = [];
+        renderComponentsTable();
+
+        // إعادة تنشيط الأزرار
+        document.getElementById("btnSaveFormula").disabled = false;
+        document.getElementById("btnUpdateFormula").disabled = true;
+        document.getElementById("btnDeleteFormula").disabled = true;
+        document.getElementById("savedFormulasSelect").selectedIndex = 0;
+    }
+</script>
+
+</body>
+</html>
