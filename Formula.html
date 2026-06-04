@@ -5,20 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧪 محرك الدعم الطبي الذكي وإدارة التركيبات العلاجية الموحدة</title>
     <style>
-        /* 🎨 بالت الألوان الفاتحة والناعمة والمريحة جداً للعين (Modern Light UI) بنفس أسلوب شاشات البرنامج */
+        /* 🎨 بالت الألوان الفاتحة والناعمة والمريحة جداً للعين (Modern Light UI) مع لمسات الـ 3D المستقرة */
         :root {
-            --bg-main: #f3f4f6;       /* رمادي جليدي مريح */
-            --bg-card: #ffffff;       /* أبيض ناصع صافي */
-            --text-dark: #1f2937;     /* رمادي غامق جداً */
-            --text-muted: #6b7280;    /* نصوص فرعية هادئة */
+            --bg-main: #dce0e6;       /* خلفية النافذة أغمق بدرجة ناعمة وفخمة */
+            --bg-card: #ffffff;       /* أبيض ناصع صافي للوحات الإدخال */
+            --bg-panels: #ebeff5;     /* لوحات الإدخال الجانبية والعلوية المتناسقة */
+            --text-dark: #212f3d;     /* نصوص داكنة فخمة وسهلة القراءة */
+            --text-muted: #6e7885;    /* نصوص ثانوية هادئة */
             
-            /* ألوان الأزرار والعناصر بنمط الباستيل الفاخر الهادئ */
+            /* ألوان الأزرار والعناصر بنمط الباستيل والـ Premium Soft */
             --v-green: #287350;       /* أخضر زيتي هادئ */
             --v-red: #a52a2a;         /* عنابي ناعم */
             --v-blue: #2d559b;        /* أزرق رصين */
             --v-dark: #4b5563;        /* رمادي مودرن */
             --v-orange: #b4641e;      /* خردلي دافئ */
-            --v-teal: #0d9488;        /* تيل/تركواز عصري */
+            --v-teal: #0d9488;        /* تركواز عصري مريح */
         }
 
         body {
@@ -31,23 +32,25 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             background-color: var(--bg-card);
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            border: 1px solid #e5e7eb;
+            border: 1px solid #c3cbd6;
             overflow: hidden;
         }
 
         /* الهيدر الفاتح العصري */
         .header {
-            background-color: #ffffff;
+            background-color: var(--bg-panels);
             padding: 20px 25px;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 2px solid #c3cbd6;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -59,12 +62,12 @@
 
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.1fr 0.9fr;
             gap: 20px;
             padding: 25px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .main-layout { grid-template-columns: 1fr; }
         }
 
@@ -73,13 +76,13 @@
             font-weight: bold;
             color: var(--v-blue);
             margin-bottom: 15px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 2px solid #c3cbd6;
             padding-bottom: 5px;
         }
 
         .form-panel {
             background-color: #fafafa;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #c3cbd6;
             border-radius: 8px;
             padding: 20px;
         }
@@ -91,7 +94,7 @@
         }
 
         .form-group label {
-            font-weight: bold;
+            font-weight: 650;
             font-size: 14px;
             margin-bottom: 5px;
             color: var(--text-dark);
@@ -105,6 +108,8 @@
             outline: none;
             background-color: #ffffff;
             font-family: inherit;
+            color: var(--text-dark);
+            transition: all 0.2s;
         }
 
         .form-control:focus {
@@ -120,7 +125,7 @@
 
         /* لوحة إضافة المكونات الفرعية */
         .component-box {
-            background-color: #edf2f7;
+            background-color: var(--bg-panels);
             border: 1px dashed var(--v-blue);
             border-radius: 8px;
             padding: 15px;
@@ -136,10 +141,10 @@
         .table-container {
             flex: 1;
             background: #ffffff;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #c3cbd6;
             border-radius: 8px;
             overflow: auto;
-            max-height: 350px;
+            max-height: 400px;
         }
 
         table {
@@ -154,23 +159,25 @@
             color: var(--text-dark);
             padding: 12px;
             font-weight: bold;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid #c3cbd6;
             position: sticky;
             top: 0;
+            z-index: 10;
         }
 
         td {
             padding: 10px 12px;
             border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
         }
 
-        tr:hover { background-color: #f8fafc; }
+        tr:hover { background-color: #f1f5f9; }
 
-        /* أزرار الواجهة الفلات المودرن */
-        .btn {
+        /* الأزرار بنمط الـ 3D الاحترافي المتناسق مع الواجهة */
+        .btn-3d {
             border: none;
             color: white;
-            padding: 10px 16px;
+            padding: 10px 18px;
             font-size: 14px;
             font-weight: bold;
             border-radius: 6px;
@@ -180,11 +187,22 @@
             justify-content: center;
             gap: 6px;
             font-family: inherit;
-            transition: opacity 0.15s;
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0px 0px rgba(0,0,0,0.2);
         }
 
-        .btn:hover { opacity: 0.9; }
-        .btn:disabled { background-color: #cbd5e1 !important; cursor: not-allowed; }
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px 0px transparent;
+        }
+
+        .btn-3d:disabled {
+            background-color: #cbd5e1 !important;
+            box-shadow: none !important;
+            transform: none !important;
+            cursor: not-allowed;
+            color: #94a3b8;
+        }
 
         .btn-green { background-color: var(--v-green); }
         .btn-red { background-color: var(--v-red); }
@@ -194,22 +212,36 @@
         .btn-teal { background-color: var(--v-teal); }
 
         .action-bar {
-            display: flex;
-            gap: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
             margin-top: 20px;
-            flex-wrap: wrap;
+        }
+
+        @media (max-width: 500px) {
+            .action-bar { grid-template-columns: 1fr; }
         }
 
         .total-box {
             background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            border: 2px solid #bbf7d0;
             color: var(--v-green);
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             padding: 15px;
             border-radius: 8px;
             text-align: center;
             margin-top: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .input-inline-table {
+            width: 70px;
+            padding: 4px;
+            border: 1px solid #c3cbd6;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -220,10 +252,10 @@
         <h1>🧪 محرك الدعم الطبي الذكي وإدارة التركيبات العلاجية الموحدة</h1>
         <div class="form-group" style="margin-bottom: 0; flex-direction: row; align-items: center; gap: 10px;">
             <label style="margin-bottom: 0; white-space: nowrap;">المخزن المزامَن:</label>
-            <select id="cbWarehouses" class="form-control" style="width: 180px;">
-                <option value="كل المخازن">كل المخازن</option>
-                <option value="المخزن الرئيسي">المخزن الرئيسي</option>
-                <option value="مخزن الحالات العاجلة">مخزن الحالات العاجلة</option>
+            <select id="cbWarehouses" class="form-control" style="width: 200px; font-weight: bold;">
+                <option value="كل المخازن">🌍 كل المخازن المشتركة</option>
+                <option value="المخزن الرئيسي">📦 المخزن الرئيسي العاير</option>
+                <option value="مخزن الحالات العاجلة">🚨 مخزن الحالات العاجلة</option>
             </select>
         </div>
     </div>
@@ -277,7 +309,7 @@
                     </div>
                 </div>
 
-                <div class="row-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-top: 10px;">
+                <div class="row-grid" style="grid-template-columns: 1.2fr 0.8fr 1fr; margin-top: 10px;">
                     <div class="form-group">
                         <label>الدرجة والأهمية</label>
                         <select id="compImportance" class="form-control">
@@ -292,18 +324,18 @@
                     </div>
                     <div class="form-group">
                         <label>الوحدة / التكلفة</label>
-                        <input type="text" id="compUnitDisplay" class="form-control" readonly value="الوحدة: جرام" style="background:#e9ecef; font-weight:bold; text-align:center;">
+                        <input type="text" id="compUnitDisplay" class="form-control" readonly value="الوحدة: جرام" style="background:#e9ecef; font-weight:bold; text-align:center; border-color:#c3cbd6;">
                     </div>
                 </div>
 
                 <div style="text-align: left; margin-top: 15px;">
-                    <button type="button" class="btn btn-teal" onclick="addComponentRow()">➕ إدراج المادة الطبية للجدول</button>
+                    <button type="button" class="btn-3d btn-teal" onclick="addComponentRow()">➕ إدراج المادة للجدول</button>
                 </div>
             </div>
 
             <div class="form-group" style="margin-top: 15px;">
                 <label>طريقة التحضير، بروتوكول الجرعات والمحاذير الطبية</label>
-                <textarea id="txtNotes" class="form-control" rows="4" placeholder="اكتب هنا بروتوكول الجرعات، طريقة الخلط، أو المحاذير الطبية لتظهر تلقائياً للطبيب عند استدعاء التركيبة..."></textarea>
+                <textarea id="txtNotes" class="form-control" rows="3" placeholder="اكتب هنا بروتوكول الجرعات، طريقة الخلط، أو المحاذير الطبية لتظهر تلقائياً للطبيب عند استدعاء التركيبة..."></textarea>
             </div>
         </div>
 
@@ -316,15 +348,15 @@
                         <tr>
                             <th>الصنف الأساسي</th>
                             <th>الصنف البديل</th>
-                            <th>الأهمية والدرجة</th>
-                            <th>الكمية</th>
+                            <th>الأهمية</th>
+                            <th style="width: 90px; text-align: center;">الكمية</th>
                             <th>الوحدة</th>
                             <th>التكلفة</th>
-                            <th>إجراء</th>
+                            <th style="text-align: center;">إجراء</th>
                         </tr>
                     </thead>
                     <tbody>
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
 
@@ -333,19 +365,19 @@
             </div>
 
             <div class="action-bar">
-                <button type="button" id="btnSaveFormula" class="btn btn-green" onclick="saveFormula(false)">💾 حفظ كتركيبة جديدة</button>
-                <button type="button" id="btnUpdateFormula" class="btn btn-dark" onclick="saveFormula(true)" disabled>✏️ حفظ التعديلات الحالية</button>
-                <button type="button" id="btnDeleteFormula" class="btn btn-red" onclick="deleteFormula()" disabled>🗑️ حذف التركيبة نهائياً</button>
-                <button type="button" id="btnClearAll" class="btn btn-orange" onclick="resetFormulaForm()">🧹 تفريغ وإعادة ضبط</button>
+                <button type="button" id="btnSaveFormula" class="btn-3d btn-green" onclick="saveFormula(false)">💾 حفظ كتركيبة جديدة</button>
+                <button type="button" id="btnUpdateFormula" class="btn-3d btn-dark" onclick="saveFormula(true)" disabled>✏️ حفظ التعديلات الحالية</button>
+                <button type="button" id="btnDeleteFormula" class="btn-3d btn-red" onclick="deleteFormula()" disabled>🗑️ حذف التركيبة نهائياً</button>
+                <button type="button" id="btnClearAll" class="btn-3d btn-orange" onclick="resetFormulaForm()">🧹 تفريغ الشاشة</button>
             </div>
 
             <div class="form-panel" style="margin-top: 20px;">
                 <div class="section-title">📂 استدعاء وفحص تركيبات سابقة من السيرفر</div>
-                <div class="form-group" style="flex-direction: row; gap: 10px;">
-                    <select id="savedFormulasSelect" class="form-control" style="flex: 1;">
-                        <option value="">-- اختر تركيبة مسجلة مسبقاً --</option>
+                <div class="form-group" style="flex-direction: row; gap: 10px; margin-bottom: 0;">
+                    <select id="savedFormulasSelect" class="form-control" style="flex: 1; font-weight: bold;">
+                        <option value="">-- جاري تحميل البيانات من السيرفر... --</option>
                     </select>
-                    <button type="button" class="btn btn-blue" onclick="loadSelectedFormula()">📥 استدعاء للشاشة</button>
+                    <button type="button" class="btn-3d btn-blue" onclick="loadSelectedFormula()">📥 استدعاء</button>
                 </div>
             </div>
         </div>
@@ -354,13 +386,35 @@
 </div>
 
 <script>
-    // مصفوفة لتخزين بنود التركيبة الحالية المعروضة بالجدول
+    // 🛠️ رابط السيرفر الخاص بك المستخرج من Google Apps Script
+    const SERVER_URL = "https://script.google.com/macros/s/AKfycbyuuZzLIAbcpPrz1y3Gt3gcXqL7AmDEXIlcHZ4wNiAVASj1bTWWZRtBGkD8E8aNgyAguA/exec";
+
     let componentsList = [];
-    // قاعدة بيانات وهمية لمحاكاة ملف الـ JSON المزامَن على جيت هاب
     let savedFormulasDB = [];
     let currentFormulaId = null;
 
-    // تحديث نص الوحدة وتكلفة البند بمجرد تغيير الصنف المختبر
+    // جلب البيانات من السيرفر فور تشغيل الواجهة تلقائياً
+    window.addEventListener("DOMContentLoaded", () => {
+        fetchFormulasFromServer();
+    });
+
+    // دالة لجلب التركيبات من السيرفر سحابياً
+    function fetchFormulasFromServer() {
+        const select = document.getElementById("savedFormulasSelect");
+        select.innerHTML = '<option value="">-- جاري التحميل... --</option>';
+
+        fetch(SERVER_URL + "?action=read")
+            .then(response => response.json())
+            .then(data => {
+                savedFormulasDB = data || [];
+                updateSavedFormulasDropdown();
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                select.innerHTML = '<option value="">❌ فشل الاتصال بالسيرفر</option>';
+            });
+    }
+
     function updateUnitCost() {
         const select = document.getElementById("compItem");
         const selectedOption = select.options[select.selectedIndex];
@@ -368,7 +422,6 @@
         document.getElementById("compUnitDisplay").value = `الوحدة: ${unit}`;
     }
 
-    // إدراج مادة طبية جديدة إلى جدول البنود
     function addComponentRow() {
         const itemSelect = document.getElementById("compItem");
         const itemName = itemSelect.value;
@@ -390,110 +443,142 @@
             return;
         }
 
-        // حساب التكلفة الاجمالية للبند الحالي
+        const existingIndex = componentsList.findIndex(c => c.itemName === itemName);
+        if (existingIndex !== -1) {
+            alert("هذا الصنف مضاف بالفعل في الجدول");
+            return;
+        }
+
         const totalCost = qty * unitCost;
 
-        // إضافة الكائن للمصفوفة الحركية
         componentsList.push({
-            id: Date.now(), // معرف فريد للحذف
+            id: Date.now(), 
             itemName: itemName,
             altItemName: altItem || "---",
             importanceLevel: importance,
             qty: qty,
+            unitCost: unitCost,
             unit: unit,
             totalCost: totalCost
         });
 
         renderComponentsTable();
-        // تصفير مدخلات البند المضاف لحماية البيانات وسرعة الحركة
+        
         itemSelect.selectedIndex = 0;
         document.getElementById("compAltItem").selectedIndex = 0;
         document.getElementById("compQty").value = "1";
         document.getElementById("compUnitDisplay").value = "الوحدة: جرام";
     }
 
-    // حذف بند من الجدول وإعادة حساب الحسابات
+    function updateInlineQty(id, newQtyValue) {
+        const qty = parseFloat(newQtyValue);
+        if (isNaN(qty) || qty <= 0) return;
+        
+        const index = componentsList.findIndex(item => item.id === id);
+        if (index !== -1) {
+            componentsList[index].qty = qty;
+            componentsList[index].totalCost = qty * componentsList[index].unitCost;
+            document.getElementById(`cost-${id}`).innerText = componentsList[index].totalCost.toFixed(2) + " ج.م";
+            calculateTotalOverallCost();
+        }
+    }
+
+    function calculateTotalOverallCost() {
+        let overallCost = 0;
+        componentsList.forEach(item => {
+            overallCost += item.totalCost;
+        });
+        document.getElementById("lblTotalCost").innerText = overallCost.toFixed(2);
+    }
+
     function removeComponentRow(id) {
         componentsList = componentsList.filter(item => item.id !== id);
         renderComponentsTable();
     }
 
-    // رندر وتحديث جدول البيانات والـ Total الفوري
     function renderComponentsTable() {
         const tbody = document.querySelector("#componentsTable tbody");
         tbody.innerHTML = "";
-        let overallCost = 0;
 
         componentsList.forEach(item => {
-            overallCost += item.totalCost;
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td style="font-weight: bold;">${item.itemName}</td>
-                <td style="color: var(--v-orange);">${item.altItemName}</td>
-                <td><small>${item.importanceLevel.split('-')[0]}</small></td>
-                <td style="font-weight: bold;">${item.qty}</td>
-                <td>${item.unit}</td>
-                <td style="color: var(--v-green); font-weight: bold;">${item.totalCost.toFixed(2)} ج.م</td>
-                <td><button type="button" class="btn btn-red" style="padding: 4px 8px; font-size: 11px;" onclick="removeComponentRow(${item.id})">🗑️</button></td>
+                <td style="font-weight: bold; color: var(--text-dark);">${item.itemName}</td>
+                <td style="color: var(--v-orange); font-size:13px;">${item.altItemName}</td>
+                <td><small class="btn-tag" style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">${item.importanceLevel.split('-')[0]}</small></td>
+                <td style="text-align:center;">
+                    <input type="number" class="input-inline-table" value="${item.qty}" min="0.1" step="0.1" oninput="updateInlineQty(${item.id}, this.value)">
+                </td>
+                <td style="color: var(--text-muted);">${item.unit}</td>
+                <td id="cost-${item.id}" style="color: var(--v-green); font-weight: bold;">${item.totalCost.toFixed(2)} ج.م</td>
+                <td style="text-align: center;"><button type="button" class="btn-3d btn-red" style="padding: 4px 8px; font-size: 11px;" onclick="removeComponentRow(${item.id})">🗑️</button></td>
             `;
             tbody.appendChild(row);
         });
 
-        document.getElementById("lblTotalCost").innerText = overallCost.toFixed(2);
+        calculateTotalOverallCost();
     }
 
-    // حفظ أو تعديل التركيبة بالكامل ومزامنتها
+    // حفظ أو تعديل وإرسال البيانات مباشرة إلى السيرفر سحابياً
     function saveFormula(isUpdate) {
         const formulaName = document.getElementById("txtFormulaName").value.trim();
         const targetDisease = document.getElementById("cbTargetDisease").value.trim();
         const symptoms = document.getElementById("txtSymptoms").value.trim();
         const notes = document.getElementById("txtNotes").value.trim();
         const totalCost = parseFloat(document.getElementById("lblTotalCost").innerText);
+        const warehouse = document.getElementById("cbWarehouses").value;
 
         if (!formulaName) {
             alert("يرجى كتابة اسم التركيبة الطبية أولاً.");
             return;
         }
         if (componentsList.length === 0) {
-            alert("لا يمكن حفظ تركيبة فارغة بدون مواد طبية مدرجة!");
+            alert("لا يمكن حفظ تركيبة فارغة!");
             return;
         }
 
-        if (isUpdate && currentFormulaId !== null) {
-            // وضع التعديل الحركي
-            const index = savedFormulasDB.findIndex(f => f.formula_id === currentFormulaId);
-            if (index !== -1) {
-                savedFormulasDB[index] = {
-                    formula_id: currentFormulaId,
-                    formula_name: formulaName,
-                    target_disease: targetDisease,
-                    associated_symptoms: symptoms,
-                    preparation_notes: notes,
-                    total_production_cost: totalCost,
-                    components: [...componentsList]
-                };
-                alert(`✔ تم حفظ التعديلات الحالية للتركيبة [ ${formulaName} ] بنجاح في قاعدة البيانات المزامنة.`);
-            }
-        } else {
-            // وضع الحفظ الجديد الشامل
-            const newId = Date.now();
-            savedFormulasDB.push({
-                formula_id: newId,
-                formula_name: formulaName,
-                target_disease: targetDisease,
-                associated_symptoms: symptoms,
-                preparation_notes: notes,
-                total_production_cost: totalCost,
-                components: [...componentsList]
-            });
-            alert(`✔ تم حفظ وتكويد التركيبة الجديدة [ ${formulaName} ] بنجاح وتحويلها لملف المزامنة السحابي.`);
-        }
+        const formulaId = isUpdate ? currentFormulaId : Date.now();
+        
+        const payload = {
+            formula_id: formulaId,
+            formula_name: formulaName,
+            target_disease: targetDisease,
+            associated_symptoms: symptoms,
+            preparation_notes: notes,
+            total_production_cost: totalCost,
+            warehouse_sync: warehouse,
+            components: componentsList
+        };
 
-        updateSavedFormulasDropdown();
-        resetFormulaForm();
+        const actionType = isUpdate ? "update" : "create";
+        
+        // إظهار مؤشر تحميل بسيط على الزر لشغل الحركة الفورية
+        const activeBtn = isUpdate ? document.getElementById("btnUpdateFormula") : document.getElementById("btnSaveFormula");
+        const originalText = activeBtn.innerText;
+        activeBtn.innerText = "⏳ جاري الحفظ سحابياً...";
+        activeBtn.disabled = true;
+
+        fetch(`${SERVER_URL}?action=${actionType}`, {
+            method: "POST",
+            mode: "no-cors", // للتعامل مع قيود CORS لـ Google Script بأمان
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alert(`✔ تم مزامنة وحفظ التركيبة [ ${formulaName} ] بنجاح على السيرفر.`);
+            resetFormulaForm();
+            setTimeout(fetchFormulasFromServer, 1000); // تحديث القائمة المنسدلة من السيرفر
+        })
+        .catch(error => {
+            console.error("Error saving formula:", error);
+            alert("❌ حدث خطأ أثناء الحفظ بالسيرفر سحابياً.");
+        })
+        .finally(() => {
+            activeBtn.innerText = originalText;
+            activeBtn.disabled = false;
+        });
     }
 
-    // استدعاء التركيبة المختارة من القائمة للشاشة وعكس البيانات بالكامل
     function loadSelectedFormula() {
         const select = document.getElementById("savedFormulasSelect");
         const id = parseInt(select.value);
@@ -504,44 +589,56 @@
 
         currentFormulaId = formula.formula_id;
         document.getElementById("txtFormulaName").value = formula.formula_name;
-        document.getElementById("cbTargetDisease").value = formula.target_disease;
-        document.getElementById("txtSymptoms").value = formula.associated_symptoms;
-        document.getElementById("txtNotes").value = formula.preparation_notes;
+        document.getElementById("cbTargetDisease").value = formula.target_disease || "";
+        document.getElementById("txtSymptoms").value = formula.associated_symptoms || "";
+        document.getElementById("txtNotes").value = formula.preparation_notes || "";
         
-        // تحميل مصفوفة المكونات
-        componentsList = [...formula.components];
+        componentsList = typeof formula.components === 'string' ? JSON.parse(formula.components) : formula.components;
         renderComponentsTable();
 
-        // تعديل حالة أزرار الـ WinForms لتتوافق مع البنية الشجرية
         document.getElementById("btnSaveFormula").disabled = true;
         document.getElementById("btnUpdateFormula").disabled = false;
         document.getElementById("btnDeleteFormula").disabled = false;
     }
 
-    // حذف التركيبة بالكامل
     function deleteFormula() {
         if (currentFormulaId === null) return;
-        if (confirm("⚠️ تحذير: هل أنت متأكد من حذف هذه التركيبة نهائياً وبشكل شامل من السيرفر؟")) {
-            savedFormulasDB = savedFormulasDB.filter(f => f.formula_id !== currentFormulaId);
-            alert("✔ تم حذف التركيبة الطبية من السيرفر بنجاح.");
-            updateSavedFormulasDropdown();
-            resetFormulaForm();
+        if (confirm("⚠️ تحذير: هل أنت متأكد من حذف هذه التركيبة نهائياً من السيرفر؟")) {
+            
+            const btn = document.getElementById("btnDeleteFormula");
+            btn.innerText = "⏳ جاري الحذف...";
+            btn.disabled = true;
+
+            fetch(`${SERVER_URL}?action=delete&id=${currentFormulaId}`, {
+                method: "POST",
+                mode: "no-cors"
+            })
+            .then(() => {
+                alert("✔ تم حذف التركيبة بنجاح من السيرفر.");
+                resetFormulaForm();
+                setTimeout(fetchFormulasFromServer, 1000);
+            })
+            .catch(error => {
+                console.error("Error deleting:", error);
+                alert("❌ حدث خطأ أثناء محاولة الحذف.");
+            })
+            .finally(() => {
+                btn.innerText = "🗑️ حذف التركيبة نهائياً";
+            });
         }
     }
 
-    // تحديث الكومبوبوكس الخاص بالتركيبات المسجلة مسبقاً
     function updateSavedFormulasDropdown() {
         const select = document.getElementById("savedFormulasSelect");
         select.innerHTML = '<option value="">-- اختر تركيبة مسجلة مسبقاً --</option>';
         savedFormulasDB.forEach(f => {
             const opt = document.createElement("option");
             opt.value = f.formula_id;
-            opt.innerText = f.formula_name;
+            opt.innerText = "🧪 " + f.formula_name;
             select.appendChild(opt);
         });
     }
 
-    // تفريغ وإعادة ضبط شاشة الواجهة للوضع الافتراضي (Reset Form)
     function resetFormulaForm() {
         currentFormulaId = null;
         document.getElementById("txtFormulaName").value = "";
@@ -552,7 +649,6 @@
         componentsList = [];
         renderComponentsTable();
 
-        // إعادة تنشيط الأزرار
         document.getElementById("btnSaveFormula").disabled = false;
         document.getElementById("btnUpdateFormula").disabled = true;
         document.getElementById("btnDeleteFormula").disabled = true;
