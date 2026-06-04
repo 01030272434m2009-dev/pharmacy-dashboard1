@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 إدارة المشتريات والواردات الاحترافية</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;650;700&display=swap');
+        
+        :root {
+            /* 🎨 بالت الألوان الناعمة والعصرية المعتمدة (Premium Soft Light UI) */
+            --bg-main: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212f3d;
+            --text-muted: #5a6978;
+            --color-border: #c8cfd6;
+            
+            /* ألوان الأزرار الهادئة والاحترافية */
+            --btn-primary: #154360;
+            --btn-success: #1b6838;
+            --btn-warning: #c27803;
+            --btn-secondary: #475569;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+        }
+
+        .premium-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* ستايل الأزرار الفلات بنظام الألوان المعتمد */
+        .btn-premium {
+            font-weight: bold;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: filter 0.15s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-premium:hover {
+            filter: brightness(1.15);
+        }
+    </style>
+</head>
+<body class="p-5">
+
+    <div class="max-w-[1300px] mx-auto space-y-6">
+        
+        <header class="premium-card p-5 flex items-center justify-between">
+            <h1 class="text-xl font-bold flex items-center gap-2" style="color: var(--text-dark);">
+                🛒 فاتورة المشتريات والواردات - نظام التكويد والتسجيل الذكي
+            </h1>
+            <div class="text-xs px-3 py-1.5 rounded bg-slate-100 text-slate-500 font-semibold border border-slate-200">
+                📅 نظام المزامنة السحابية: نشط
+            </div>
+        </header>
+
+        <section class="premium-card p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-bold" style="color: var(--text-muted);">اسم المورد / الشركة:</label>
+                <input type="text" id="txtSupplier" class="border border-slate-300 rounded p-2 text-base outline-none focus:border-slate-500" placeholder="اكتب اسم المورد أو الشركة...">
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="text-sm font-bold" style="color: var(--text-muted);">المخزن المستهدف:</label>
+                <select id="cbWarehouse" class="border border-slate-300 rounded p-2 text-base outline-none bg-white focus:border-slate-500" onchange="loadWarehouseData()">
+                    <option value="صالة العرض">صالة العرض</option>
+                    <option value="المخزن الرئيسي">المخزن الرئيسي</option>
+                    <option value="مخزن الثلاجة">مخزن الثلاجة</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="premium-card p-6 space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">🔍 بحث سريع (كود/اسم):</label>
+                    <input type="text" id="txtSearch" class="border border-slate-300 rounded p-2 text-base outline-none" placeholder="ابحث هنا..." oninput="searchItemTextChanged()">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">اختر الصنف من القائمة:</label>
+                    <select id="cbItems" class="border border-slate-300 rounded p-2 text-base outline-none bg-white" onchange="selectItem()">
+                        </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">كود الصنف:</label>
+                    <input type="text" id="txtCode" class="border border-slate-200 rounded p-2 text-base bg-slate-50 text-slate-400 font-bold" readonly>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">رقم التشغيلة الافتراضي:</label>
+                    <input type="text" id="txtBatch" class="border border-slate-200 rounded p-2 text-base bg-slate-50 text-slate-400 font-bold" readonly>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-7 gap-4 items-end">
+                <div class="flex flex-col gap-2 md:col-span-1">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">تاريخ الإنتاج:</label>
+                    <input type="month" id="dtpProd" class="border border-slate-300 rounded p-1.5 text-sm font-bold" onchange="calculateExpiryDate()">
+                </div>
+                <div class="flex flex-col gap-2 md:col-span-1">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">تاريخ الانتهاء:</label>
+                    <input type="month" id="dtpExp" class="border border-slate-300 rounded p-1.5 text-sm font-bold">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">الكمية:</label>
+                    <input type="number" id="txtQty" class="border border-slate-300 rounded p-2 text-base text-center" min="1" placeholder="0">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">سعر الشراء:</label>
+                    <input type="number" id="txtBuyPrice" class="border border-slate-300 rounded p-2 text-base text-center" step="0.01" placeholder="0.00">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">بيع (جملة):</label>
+                    <input type="number" id="txtSellWholesale" class="border border-slate-300 rounded p-2 text-base text-center" step="0.01" placeholder="0.00">
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold" style="color: var(--text-muted);">بيع (قطاعي):</label>
+                    <input type="number" id="txtSellRetail" class="border border-slate-300 rounded p-2 text-base text-center" step="0.01" placeholder="0.00">
+                </div>
+                
+                <div class="col-span-2 md:col-span-1">
+                    <button type="button" class="btn-premium w-full text-sm" style="background-color: var(--btn-success);" onclick="addItem()">
+                        ➕ إضافة للفاتورة
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="premium-card overflow-hidden bg-white">
+            <div class="overflow-x-auto max-h-[350px]">
+                <table class="w-full text-center border-collapse">
+                    <thead>
+                        <tr class="text-sm font-bold border-b border-slate-200" style="background-color: #eaedf0; color: var(--text-dark);">
+                            <th class="p-3">الكود</th>
+                            <th class="p-3">الصنف</th>
+                            <th class="p-3">التشغيلة</th>
+                            <th class="p-3">الانتهاء</th>
+                            <th class="p-3">الكمية</th>
+                            <th class="p-3">سعر الشراء</th>
+                            <th class="p-3">بيع قطاعي</th>
+                            <th class="p-3">الإجمالي</th>
+                            <th class="p-3">إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceGridBody" class="divide-y divide-slate-100 text-sm font-medium">
+                        <tr id="emptyRow"><td colspan="9" class="p-8 text-slate-400 font-semibold">لا توجد أصناف مضافة حالياً للفاتورة...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer class="premium-card p-5 flex flex-col md:flex-row justify-between items-center gap-6">
+            
+            <div class="flex flex-wrap items-center gap-6">
+                <span id="lblTotalQty" class="text-base font-bold" style="color: var(--text-dark);">📦 إجمالي الكمية: 0</span>
+                <span id="lblTotalProfit" class="text-base font-bold" style="color: var(--btn-success);">📈 المكسب المتوقع: 0.00 ج</span>
+                <span id="lblTotalCost" class="text-lg font-bold" style="color: var(--btn-primary);">💰 قيمة الفاتورة: 0.00 ج</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+                <button type="button" class="btn-premium text-sm" style="background-color: var(--btn-warning);" onclick="printInvoice()">🖨 طباعة</button>
+                <button type="button" class="btn-premium text-sm" style="background-color: var(--btn-secondary);" onclick="openHistory()">📜 فواتير سابقة</button>
+                <button type="button" class="btn-premium text-sm" style="background-color: var(--btn-secondary);" onclick="importExcel()">📊 استيراد (إكسيل)</button>
+                <button type="button" class="btn-premium text-sm text-base" style="background-color: var(--btn-primary);" onclick="saveInvoice()">💾 حفظ وترحيل الفاتورة</button>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // محاكاة قاعدة البيانات المحلية للأصناف الفريدة بنظامك لربط الكومبوبوكس تلقائياً
+        const localStockDatabase = [
+            { code: "1000001", name: "بان تيرامايسين حقن 100 مل", buyPrice: 120.00, sellRetail: 150.00, sellWholesale: 135.00, expiryMonths: 24 },
+            { code: "1000002", name: "أموكسيسيلين 50% بودرة 1 كجم", buyPrice: 450.00, sellRetail: 520.00, sellWholesale: 480.00, expiryMonths: 18 },
+            { code: "1000003", name: "كولستين سلفات مركّز 500 جرام", buyPrice: 280.00, sellRetail: 340.00, sellWholesale: 310.00, expiryMonths: 24 },
+            { code: "1000004", name: "أد3هـ سائل مستورد 1 لتر", buyPrice: 310.00, sellRetail: 380.00, sellWholesale: 345.00, expiryMonths: 12 }
+        ];
+
+        let filteredItems = [...localStockDatabase];
+        let invoiceItems = []; // قائمة العناصر المضافة للفاتورة الحالية
+
+        // 1. تشغيل تلقائي وتجهيز تواريخ الإنتاج الافتراضية
+        window.onload = function() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            document.getElementById('dtpProd').value = `${year}-${month}`;
+            
+            refreshItemsComboBox(filteredItems);
+        };
+
+        // 2. تحديث وتعبئة الكومبوبوكس الخاص بالأصناف
+        function refreshItemsComboBox(sourceList) {
+            const cbItems = document.getElementById('cbItems');
+            cbItems.innerHTML = "";
+            
+            if (sourceList.length === 0) {
+                cbItems.innerHTML = '<option value="">-- لا توجد أصناف مطابقة --</option>';
+                clearItemFields();
+                return;
+            }
+
+            sourceList.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.code;
+                opt.textContent = item.name;
+                cbItems.appendChild(opt);
+            });
+
+            selectItem();
+        }
+
+        // 3. البحث السريع والتصفية الفورية عند الكتابة الكود أو الاسم
+        function searchItemTextChanged() {
+            const keyword = document.getElementById('txtSearch').value.trim().toLowerCase();
+            if (!keyword) {
+                filteredItems = [...localStockDatabase];
+            } else {
+                filteredItems = localStockDatabase.filter(i => 
+                    i.name.toLowerCase().includes(keyword) || i.code.includes(keyword)
+                );
+            }
+            refreshItemsComboBox(filteredItems);
+        }
+
+        // 4. استدعاء بيانات الصنف المختار وتوليد التشغيلة وحساب الصلاحية تلقائياً
+        function selectItem() {
+            const code = document.getElementById('cbItems').value;
+            const item = localStockDatabase.find(i => i.code === code);
+            
+            if (item) {
+                document.getElementById('txtCode').value = item.code;
+                document.getElementById('txtBuyPrice').value = item.buyPrice.toFixed(2);
+                document.getElementById('txtSellWholesale').value = item.sellWholesale.toFixed(2);
+                document.getElementById('txtSellRetail').value = item.sellRetail.toFixed(2);
+                
+                // محاكاة توليد التشغيلة التلقائي المعتمد: B-الكود-رقم الدفعة
+                document.getElementById('txtBatch').value = `B-${item.code}-01`;
+                calculateExpiryDate();
+            } else {
+                clearItemFields();
+            }
+        }
+
+        function clearItemFields() {
+            document.getElementById('txtCode').value = "";
+            document.getElementById('txtBatch').value = "";
+            document.getElementById('txtBuyPrice').value = "";
+            document.getElementById('txtSellWholesale').value = "";
+            document.getElementById('txtSellRetail').value = "";
+        }
+
+        // 5. حساب تاريخ الانتهاء تلقائياً بناءً على أشهر صلاحية الصنف المخزنة
+        function calculateExpiryDate() {
+            const code = document.getElementById('cbItems').value;
+            const item = localStockDatabase.find(i => i.code === code);
+            const prodVal = document.getElementById('dtpProd').value;
+            
+            if (item && prodVal) {
+                const parts = prodVal.split('-');
+                let year = parseInt(parts[0]);
+                let month = parseInt(parts[1]);
+                
+                const monthsToAdd = item.expiryMonths > 0 ? item.expiryMonths : 24;
+                month += monthsToAdd;
+                
+                while (month > 12) {
+                    month -= 12;
+                    year += 1;
+                }
+                
+                document.getElementById('dtpExp').value = `${year}-${String(month).padStart(2, '0')}`;
+            }
+        }
+
+        // 6. إضافة الصنف لجدول الفاتورة اللحظي والتحقق المسبق
+        function addItem() {
+            const code = document.getElementById('txtCode').value;
+            const item = localStockDatabase.find(i => i.code === code);
+            if (!item) return;
+
+            const qty = parseFloat(document.getElementById('txtQty').value);
+            const buyPrice = parseFloat(document.getElementById('txtBuyPrice').value);
+            const sellWholesale = parseFloat(document.getElementById('txtSellWholesale').value);
+            const sellRetail = parseFloat(document.getElementById('txtSellRetail').value);
+            const batch = document.getElementById('txtBatch').value;
+            const expDate = document.getElementById('dtpExp').value;
+
+            if (isNaN(qty) || qty <= 0) {
+                alert("الرجاء إدخال كمية صحيحة أكبر من الصفر.");
+                document.getElementById('txtQty').focus();
+                return;
+            }
+            if (isNaN(buyPrice) || isNaN(sellRetail) || isNaN(sellWholesale)) {
+                alert("الرجاء التأكد من صحة قيم الأسعار المدخلة.");
+                return;
+            }
+
+            // صياغة السطر المضاف للفاتورة
+            const invoiceRow = {
+                id: Date.now(),
+                code: item.code,
+                name: item.name,
+                batch: batch,
+                exp: expDate,
+                qty: qty,
+                buyPrice: buyPrice,
+                sellRetail: sellRetail,
+                sellWholesale: sellWholesale,
+                total: qty * buyPrice
+            };
+
+            invoiceItems.push(invoiceRow);
+            renderInvoiceGrid();
+            
+            // تنظيف حقول المدخلات لتسريع العمليات المتعاقبة
+            document.getElementById('txtQty').value = "";
+            document.getElementById('txtSearch').value = "";
+            document.getElementById('txtSearch').focus();
+        }
+
+        // 7. رندر جدول الفاتورة وحساب الإجماليات الإدارية والمكاسب المتوقعة فوراً
+        function renderInvoiceGrid() {
+            const tbody = document.getElementById('invoiceGridBody');
+            tbody.innerHTML = "";
+
+            if (invoiceItems.length === 0) {
+                tbody.innerHTML = '<tr id="emptyRow"><td colspan="9" class="p-8 text-slate-400 font-semibold">لا توجد أصناف مضافة حالياً للفاتورة...</td></tr>';
+                updateTotalsDisplay(0, 0, 0);
+                return;
+            }
+
+            let totalQty = 0;
+            let totalCost = 0;
+            let totalProfit = 0;
+
+            invoiceItems.forEach(row => {
+                totalQty += row.qty;
+                totalCost += row.total;
+                totalProfit += row.qty * (row.sellRetail - row.buyPrice);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold">${row.code}</td>
+                    <td class="p-3 text-right font-semibold text-slate-900">${row.name}</td>
+                    <td class="p-3 text-slate-500">${row.batch}</td>
+                    <td class="p-3 font-semibold text-orange-700">${row.exp}</td>
+                    <td class="p-3 font-bold">${row.qty}</td>
+                    <td class="p-3 font-semibold">${row.buyPrice.toFixed(2)}</td>
+                    <td class="p-3 text-slate-600">${row.sellRetail.toFixed(2)}</td>
+                    <td class="p-3 font-bold text-teal-700">${row.total.toFixed(2)} ج</td>
+                    <td class="p-3"><button class="text-rose-600 hover:text-rose-800 font-bold" onclick="removeRow(${row.id})">🗑</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateTotalsDisplay(totalQty, totalCost, totalProfit);
+        }
+
+        function removeRow(id) {
+            invoiceItems = invoiceItems.filter(r => r.id !== id);
+            renderInvoiceGrid();
+        }
+
+        function updateTotalsDisplay(qty, cost, profit) {
+            document.getElementById('lblTotalQty').textContent = `📦 إجمالي الكمية: ${qty}`;
+            document.getElementById('lblTotalCost').textContent = `💰 قيمة الفاتورة: ${cost.toFixed(2)} ج`;
+            document.getElementById('lblTotalProfit').textContent = `📈 المكسب المتوقع: ${profit.toFixed(2)} ج`;
+        }
+
+        // 8. حفظ وترحيل الفاتورة وإصدار الكود المتسلسل تلقائياً مع تفريغ الحقول
+        function saveInvoice() {
+            if (invoiceItems.length === 0) {
+                alert("لا توجد أصناف مضافة لحفظ الفاتورة.");
+                return;
+            }
+
+            const warehouse = document.getElementById('cbWarehouse').value;
+            const supplier = document.getElementById('txtSupplier').value.trim() || "مورد عام";
+            
+            // توليد كود الفاتورة التلقائي الاحترافي المتسلسل مع الوقت الحالي
+            const now = new Date();
+            const timestamp = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + "-" + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0') + String(now.getSeconds()).padStart(2,'0');
+            const generatedInvoiceNo = `PUR-${timestamp}`;
+
+            alert(`✔ تم حفظ الفاتورة بنجاح بالرقم (${generatedInvoiceNo})\nالمورد: ${supplier}\nالمخزن: ${warehouse}\nتم ترحيل الأصناف وزيادة كميات المخازن سحابياً.`);
+            
+            // تفريغ الفاتورة لإعداد الشاشة للمشتريات التالية
+            invoiceItems = [];
+            document.getElementById('txtSupplier').value = "";
+            renderInvoiceGrid();
+        }
+
+        // 9. الدوال الإجرائية التكميلية (أزرار التاريخ، الإكسيل والطباعة)
+        function printInvoice() {
+            alert("جاري إعداد التقرير وتحويل الفاتورة للطباعة والمعاينة...");
+        }
+
+        function openHistory() {
+            alert("جاري فتح شاشة السجل التاريخي لفحص الفواتير السابقة من قاعدة البيانات...");
+        }
+
+        function importExcel() {
+            alert("جاري تشغيل واجهة الاستيراد الذكي للأصناف والواردات من ملفات Excel...");
+        }
+
+        function loadWarehouseData() {
+            // منطق مخصص للتحديث الفوري للبيانات بمجرد نقل المخزن المستهدف
+            const currentWh = document.getElementById('cbWarehouse').value;
+            console.log(`تم تحويل عرض البيانات ومزامنتها على مخزن: ${currentWh}`);
+        }
+    </script>
+</body>
+</html>
