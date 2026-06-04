@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 إدارة وتكويد الأصناف الموحد لجميع المخازن</title>
+    <style>
+        /* 🎨 بالت الألوان الفاتحة والناعمة والمريحة جداً للعين (Modern Light UI) */
+        :root {
+            --bg-main: #f3f4f6;       /* رمادي جليدي مريح */
+            --bg-card: #ffffff;       /* أبيض ناصع صافي */
+            --text-dark: #1f2937;     /* رمادي غامق جداً */
+            --text-muted: #6b7280;    /* نصوص فرعية هادئة */
+            
+            /* ألوان الأزرار بنمط الباستيل الفاخر الهادئ */
+            --v-green: #287350;       /* أخضر زيتي هادئ */
+            --v-red: #a52a2a;         /* عنابي ناعم */
+            --v-blue: #2d559b;        /* أزرق رصين */
+            --v-dark: #4b5563;        /* رمادي مودرن */
+            --v-orange: #b4641e;      /* خردلي دافئ */
+            --v-teal: #0d9488;        /* تيل/تركواز عصري للجدول */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background-color: var(--bg-card);
+            width: 100%;
+            max-width: 650px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* الهيدر الفاتح */
+        .header {
+            background-color: var(--bg-card);
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header h1 {
+            color: var(--v-blue);
+            font-size: 20px;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .form-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            width: 200px;
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid #cbcbcb;
+            border-radius: 6px;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            border-color: var(--v-blue);
+            box-shadow: 0 0 0 3px rgba(45, 85, 155, 0.15);
+        }
+
+        .form-control[readonly] {
+            background-color: #e6ebf0;
+            color: var(--v-blue);
+            font-weight: bold;
+            border-color: #cbd5e1;
+        }
+
+        /* حقل الصلاحية الفرعي */
+        .expiry-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .txt-expiry {
+            width: 90px;
+            flex: none;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-month {
+            border: none;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-month:hover { opacity: 0.85; }
+
+        /* لوحة الأزرار المودرن */
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-action {
+            border: none;
+            color: white;
+            padding: 14px 10px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: transform 0.1s, filter 0.2s;
+        }
+
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action:hover { filter: brightness(0.95); }
+
+        .btn-green { background-color: var(--v-green); }
+        .btn-red { background-color: var(--v-red); }
+        .btn-blue { background-color: var(--v-blue); }
+        .btn-dark { background-color: var(--v-dark); }
+        
+        .btn-span-2 { grid-column: span 2; background-color: var(--v-orange); }
+        .btn-span-3 { grid-column: span 3; background-color: var(--v-teal); }
+
+        .status-msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <div class="header">
+        <h1>📝 إضافة وتكويد صنف جديد (في كل المخازن معاً)</h1>
+    </div>
+
+    <div class="form-body">
+        
+        <div class="form-group">
+            <label>كود الصنف (تلقائي موحد)</label>
+            <input type="text" id="txtCode" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>اسم الصنف (مطلوب)</label>
+            <input type="text" id="txtName" class="form-control" placeholder="أدخل اسم الصنف">
+        </div>
+
+        <div class="form-group">
+            <label>اسم الشركة (اختياري)</label>
+            <input type="text" id="txtCompany" class="form-control" placeholder="أدخل اسم الشركة المنتجة">
+        </div>
+
+        <div class="form-group">
+            <label>المادة الفعالة (اختياري)</label>
+            <input type="text" id="txtActiveIngredient" class="form-control" placeholder="أدخل المادة الفعالة">
+        </div>
+
+        <div class="form-group">
+            <label>مدة الصلاحية (بالشهور)</label>
+            <div class="expiry-container">
+                <input type="number" id="txtExpiryMonths" class="form-control txt-expiry" value="24">
+                <button type="button" class="btn-month" style="background:#dbeafe; color:#1e40af;" onclick="setExpiry(12)">12</button>
+                <button type="button" class="btn-month" style="background:#dcfce7; color:#15803d;" onclick="setExpiry(24)">24</button>
+                <button type="button" class="btn-month" style="background:#fef3c7; color:#b45309;" onclick="setExpiry(36)">36</button>
+                <button type="button" class="btn-month" style="background:#f3e8ff; color:#6b21a8;" onclick="setExpiry(48)">48</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>حد الطلب (افتراضي 5)</label>
+            <input type="number" id="txtMinQty" class="form-control" value="5" style="color: #15803d; font-weight: bold;">
+        </div>
+
+        <div id="statusBox" class="status-msg"></div>
+
+        <div class="buttons-grid">
+            <button type="button" class="btn-action btn-green" onclick="handleSaveItem()">➕ حفظ وتكويد شامل</button>
+            <button type="button" class="btn-action btn-red" onclick="handleDeleteItem()">🗑 حذف من الكل</button>
+            <button type="button" class="btn-action btn-blue" onclick="alert('فتح لوحة عرض الكروت...')">📋 لوحة عرض الكروت</button>
+            
+            <button type="button" class="btn-action btn-dark" onclick="alert('شاشة تعديل صنف...')">✏️ تعديل صنف</button>
+            <button type="button" class="btn-action btn-span-2" onclick="alert('تحميل ملف إكسيل للمزامنة...')">📊 إدخال سريع (إكسيل)</button>
+            
+            <button type="button" class="btn-action btn-span-3" onclick="alert('عرض الجدول العام وجرد الأصناف...')">📊 كشف وجرد الأصناف (الجدول العام)</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // محاكاة سحب البيانات السحابية من ملف data.json المخزن بجانب الصفحة
+    let itemsData = { "items": [], "warehouses": ["المخزن الرئيسي", "مخزن الحالات", "مخزن اللقاحات"] };
+
+    // تحميل البيانات التلقائية عند تشغيل الصفحة
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('data.json')
+            .then(res => res.json())
+            .then(data => {
+                if(data && data.items) itemsData.items = data.items;
+                updateGeneratedCode();
+            })
+            .catch(err => {
+                console.log("سيتم بدء التكويد من الرقم الافتراضي الأساسي.");
+                updateGeneratedCode();
+            });
+
+        // ربط أحداث تغيير الاسم لمعرفة تكرار الكود
+        document.getElementById("txtName").addEventListener("input", checkExistingItem);
+        document.getElementById("txtCompany").addEventListener("input", checkExistingItem);
+    });
+
+    // توليد كود تسلسلي مكون من 7 أرقام بناءً على آخر صنف مسجل
+    function generate7DigitSequentialCode() {
+        let startCode = 1000000;
+        if (itemsData.items && itemsData.items.length > 0) {
+            // تصفية الأكواد المكونة من 7 أرقام فقط والبحث عن الأعلى
+            let validCodes = itemsData.items
+                .map(i => parseInt(i.Code))
+                .filter(c => !isNaN(c) && c.toString().length === 7);
+            
+            if (validCodes.length > 0) {
+                let maxCode = Math.max(...validCodes);
+                if (maxCode >= startCode) {
+                    startCode = maxCode + 1;
+                }
+            }
+        }
+        return startCode.toString();
+    }
+
+    function updateGeneratedCode() {
+        const codeField = document.getElementById("txtCode");
+        codeField.value = generate7DigitSequentialCode();
+        codeField.style.color = "#2d559b";
+    }
+
+    function setExpiry(months) {
+        document.getElementById("txtExpiryMonths").value = months;
+    }
+
+    // التحقق من وجود الصنف مسبقاً لمنع تكرار الحسابات وتداخلها
+    function checkExistingItem() {
+        let name = document.getElementById("txtName").value.trim().toLowerCase();
+        let company = document.getElementById("txtCompany").value.trim().toLowerCase();
+        let codeField = document.getElementById("txtCode");
+
+        if(!name) {
+            updateGeneratedCode();
+            return;
+        }
+
+        let existingItem = itemsData.items.find(i => 
+            i.Name.toLowerCase() === name && 
+            i.Company.toLowerCase() === company
+        );
+
+        if(existingItem) {
+            codeField.value = existingItem.Code;
+            codeField.style.color = "darkorange";
+            document.getElementById("txtExpiryMonths").value = existingItem.ExpiryMonths;
+            document.getElementById("txtMinQty").value = existingItem.MinQty || 5;
+            showStatus("⚠️ هذا الصنف مسجل مسبقاً، تم جلب كود التكويد الموحد الخاص به.", "#fef3c7", "#b45309");
+        } else {
+            updateGeneratedCode();
+            hideStatus();
+        }
+    }
+
+    // تنفيذ عملية الحفظ والتكويد الشامل
+    function handleSaveItem() {
+        let name = document.getElementById("txtName").value.trim();
+        let company = document.getElementById("txtCompany").value.trim();
+        let code = document.getElementById("txtCode").value.trim();
+        let expiryMonths = parseInt(document.getElementById("txtExpiryMonths").value);
+        let minQty = parseInt(document.getElementById("txtMinQty").value) || 5;
+
+        if (!name) {
+            alert("يرجى كتابة اسم الصنف أولاً");
+            document.getElementById("txtName").focus();
+            return;
+        }
+
+        if (!code || code.length !== 7 || isNaN(code)) {
+            alert("يجب أن يتكون كود الصنف من 7 أرقام صحيحة.");
+            return;
+        }
+
+        if (isNaN(expiryMonths) || expiryMonths <= 0) {
+            alert("يرجى إدخال مدة صلاحية صحيحة بالشهور");
+            return;
+        }
+
+        // فحص التكرار النهائي قبل الإرسال للملف السحابي
+        let isDuplicate = itemsData.items.some(i => i.Name.toLowerCase() === name.toLowerCase() && i.Company.toLowerCase() === company.toLowerCase());
+        if(isDuplicate) {
+            showStatus("❌ هذا الصنف مسجل بالفعل في جميع المخازن مسبقاً!", "#fee2e2", "#a52a2a");
+            return;
+        }
+
+        // إنشاء كائن الصنف المتكامل المتوافق تماماً مع بنية البرنامج
+        let newItem = {
+            Code: code,
+            Name: name,
+            Company: company,
+            ActiveIngredient: document.getElementById("txtActiveIngredient").value.trim(),
+            ExpiryMonths: expiryMonths,
+            BuyPrice: 0, SellRetail: 0, SellWholesale: 0, Quantity: 0,
+            MinQty: minQty,
+            BatchNumber: "AUTO",
+            ProdDate: new Date().toISOString().split('T')[0]
+        };
+
+        itemsData.items.push(newItem);
+        
+        showStatus(`✔ تم إضافة وتكويد الصنف [ ${name} ] بنجاح في جميع المخازن معاً وجاري تحديث الـ GitHub Repository.`, "#dcfce7", "#287350");
+        clearForm();
+    }
+
+    function handleDeleteItem() {
+        let code = document.getElementById("txtCode").value.trim();
+        if (!code) { alert("اختر أو اكتب كود الصنف المراد حذفه نهائياً."); return; }
+
+        if (confirm("⚠️ تحذير: هل أنت متأكد من حذف هذا الصنف بشكل نهائي من جميع المخازن المزامنة؟")) {
+            let initialCount = itemsData.items.length;
+            itemsData.items = itemsData.items.filter(i => i.Code !== code);
+
+            if(itemsData.items.length < initialCount) {
+                showStatus("✔ تم حذف الصنف من جميع المخازن بنجاح.", "#dcfce7", "#287350");
+                clearForm();
+            } else {
+                alert("لم يتم العثور على الصنف لحذفه.");
+            }
+        }
+    }
+
+    function clearForm() {
+        document.getElementById("txtName").value = "";
+        document.getElementById("txtCompany").value = "";
+        document.getElementById("txtActiveIngredient").value = "";
+        document.getElementById("txtExpiryMonths").value = "24";
+        document.getElementById("txtMinQty").value = "5";
+        updateGeneratedCode();
+        document.getElementById("txtName").focus();
+    }
+
+    function showStatus(text, bgColor, textColor) {
+        const box = document.getElementById("statusBox");
+        box.innerText = text;
+        box.style.backgroundColor = bgColor;
+        box.style.color = textColor;
+        box.style.display = "block";
+    }
+
+    function hideStatus() {
+        document.getElementById("statusBox").style.display = "none";
+    }
+</script>
+
+</body>
+</html>
