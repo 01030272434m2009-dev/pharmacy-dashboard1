@@ -1,278 +1,258 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📦 لوحة جرد وعرض أصناف المخازن الاحترافية السريعة</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
+<script>
+const SERVER_URL =
+"https://script.google.com/macros/s/AKfycbyuuZzLIAbcpPrz1y3Gt3gcXqL7AmDEXIlcHZ4wNiAVASj1bTWWZRtBGkD8E8aNgyAguA/exec";
+
+let allItems = [];
+
+async function apiGet(sheetName) {
+
+    const response = await fetch(
+        `${SERVER_URL}?action=${sheetName}`
+    );
+
+    return await response.json();
+}
+
+async function apiPost(sheetName, data) {
+
+    const response = await fetch(
+        SERVER_URL,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                action: sheetName,
+                data: data
+            })
         }
-        .flat-3d-btn {
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 0px 0px rgba(0, 0, 0, 0.1);
-        }
-        .flat-3d-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0px 0px transparent;
-        }
-    </style>
-</head>
-<body class="text-slate-800 p-4 md:p-8">
+    );
 
-    <div class="max-w-7xl mx-auto space-y-6">
-        
-        <header class="bg-white rounded-lg p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-                <div class="flex flex-col gap-1">
-                    <label class="text-sm font-bold text-slate-500"><i class="fa-solid fa-magnifying-glass ml-1"></i> ابحث هنا (باسم الصنف أو الكود):</label>
-                    <input type="text" id="txtSearch" placeholder="اكتب للبحث السريع..." class="border border-slate-300 rounded px-3 py-1.5 text-base focus:outline-none focus:border-indigo-500 w-full md:w-64">
-                </div>
-                <div class="flex flex-col gap-1">
-                    <label class="text-sm font-bold text-slate-500"><i class="fa-solid fa-warehouse ml-1"></i> اختر المخزن المستهدف:</label>
-                    <select id="cbWarehouses" class="border border-slate-300 rounded px-3 py-1.5 text-base bg-white focus:outline-none focus:border-indigo-500 w-full md:w-56">
-                        <option value="صالة العرض">صالة العرض</option>
-                        <option value="المخزن الرئيسي">المخزن الرئيسي</option>
-                        <option value="مخزن الطوارئ">مخزن الطوارئ</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="flex gap-3 w-full md:w-auto justify-end">
-                <button class="flat-3d-btn bg-emerald-700 text-white font-bold px-4 py-2 rounded flex items-center gap-2 hover:bg-emerald-800">
-                    <i class="fa-solid fa-chart-bar"></i> عرض الجدول (Excel)
-                </button>
-                <button class="flat-3d-btn bg-blue-700 text-white font-bold px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-800">
-                    <i class="fa-solid fa-plus"></i> إضافة صنف جديد
-                </button>
-            </div>
-        </header>
+    return await response.json();
+}
 
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded p-4 shadow-sm flex justify-between items-center border-r-4 border-slate-800">
-                <div>
-                    <p class="text-xs text-gray-500 font-semibold">💰 رأس المال بالمخزن</p>
-                    <h3 id="lblStatCapital" class="text-xl font-bold text-slate-800 mt-1">145,250.00 ج</h3>
-                </div>
-                <i class="fa-solid fa-coins text-slate-300 text-2xl"></i>
-            </div>
-            <div class="bg-white rounded p-4 shadow-sm flex justify-between items-center border-r-4 border-emerald-600">
-                <div>
-                    <p class="text-xs text-gray-500 font-semibold">📈 الأرباح المتوقعة</p>
-                    <h3 id="lblStatProfit" class="text-xl font-bold text-emerald-600 mt-1">28,400.00 ج</h3>
-                </div>
-                <i class="fa-solid fa-chart-line text-emerald-200 text-2xl"></i>
-            </div>
-            <div class="bg-white rounded p-4 shadow-sm flex justify-between items-center border-r-4 border-amber-500">
-                <div>
-                    <p class="text-xs text-gray-500 font-semibold">⚠️ الأصناف الناقصة</p>
-                    <h3 id="lblStatShortages" class="text-xl font-bold text-amber-600 mt-1">3 أصناف</h3>
-                </div>
-                <i class="fa-solid fa-triangle-exclamation text-amber-200 text-2xl"></i>
-            </div>
-            <div class="bg-white rounded p-4 shadow-sm flex justify-between items-center border-r-4 border-red-600">
-                <div>
-                    <p class="text-xs text-gray-500 font-semibold">❌ أصناف منتهية الصلاحية</p>
-                    <h3 id="lblStatExpired" class="text-xl font-bold text-red-600 mt-1">1 صنف</h3>
-                </div>
-                <i class="fa-solid fa-circle-xmark text-red-200 text-2xl"></i>
-            </div>
-        </section>
+async function loadItems() {
 
-        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            
-            <div class="lg:col-span-1 space-y-4 max-h-[600px] overflow-y-auto p-2 bg-slate-200 rounded-lg" id="itemsContainer">
-                
-                <div class="bg-white p-4 rounded-lg shadow-sm border-r-4 border-blue-500 flex flex-col justify-between h-[255px]">
-                    <div>
-                        <h4 class="font-bold text-base text-slate-800">أفوميك سوبر حقن 50 مل</h4>
-                        <p class="text-xs text-blue-700 italic mt-1">🏢 شركة النصر الدوائية</p>
-                        <p class="text-xs text-slate-500 mt-1">🧪 مادة: إيفيرمكتين + كلورسولون</p>
-                    </div>
-                    <div class="text-xs space-y-1 my-2">
-                        <p class="font-bold text-slate-800">📦 الكمية بالمخزن: <span class="text-slate-900">45 قطعة</span></p>
-                        <p class="text-slate-500">⏳ انتهاء: 2027-08-12</p>
-                        <p class="text-emerald-700 font-semibold">بيع: 450.00 ج | شراء: 380.00 ج</p>
-                    </div>
-                    <button onclick="toggleDetailsForm()" class="flat-3d-btn w-full bg-indigo-600 text-white font-bold py-2 rounded text-sm hover:bg-indigo-700">
-                        📂 عرض وتفاصيل الصنف
-                    </button>
-                </div>
+    try {
 
-                <div class="bg-red-50 p-4 rounded-lg shadow-sm border-r-4 border-red-500 flex flex-col justify-between h-[255px]">
-                    <div>
-                        <div class="inline-block bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1">🔥 نقص في المخزون</div>
-                        <h4 class="font-bold text-base text-slate-800">تحصين كولومفاك طيور</h4>
-                        <p class="text-xs text-blue-700 italic mt-0.5">🏢 استيراد هولندي</p>
-                        <p class="text-xs text-slate-500 mt-0.5">🧪 مادة: لقاح ميت</p>
-                    </div>
-                    <div class="text-xs space-y-1 my-1">
-                        <p class="font-bold text-red-800">📦 الكمية بالمخزن: 2 قطعة</p>
-                        <p class="text-red-500 font-medium">⏳ انتهاء قريبا: 2026-07-01</p>
-                        <p class="text-emerald-700 font-semibold">بيع: 120.00 ج | شراء: 95.00 ج</p>
-                    </div>
-                    <button class="flat-3d-btn w-full bg-red-600 text-white font-bold py-2 rounded text-sm hover:bg-red-700">
-                        📂 عرض وتفاصيل الصنف
-                    </button>
-                </div>
+        const result = await apiGet("items");
 
-            </div>
-
-            <div id="detailsFormSection" class="lg:col-span-2 bg-white rounded-lg shadow-sm p-6 space-y-6">
-                
-                <div class="flex flex-col md:flex-row justify-between gap-6 border-b pb-6">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-28 h-28 bg-slate-100 border border-slate-200 rounded flex flex-col items-center justify-center text-center p-2">
-                            <i class="fa-solid fa-qrcode text-5xl text-slate-700"></i>
-                            <span class="text-[9px] text-slate-500 mt-1 font-mono">Item QR Code</span>
-                        </div>
-                        <div class="space-y-1.5">
-                            <h2 class="text-xl font-bold text-slate-800">أفوميك سوبر حقن 50 مل</h2>
-                            <p class="text-sm font-bold text-slate-500">🔑 كود الصنف: <span class="font-mono text-slate-700">1002045</span></p>
-                            <p class="text-xs text-slate-400">⏳ صلاحية الصنف: 36 شهراً</p>
-                            <div class="pt-1">
-                                <p class="text-sm font-bold text-blue-700">🏢 الشركة: شركة النصر الدوائية</p>
-                                <p class="text-xs text-slate-600">🧪 المادة الفعالة: إيفيرمكتين + كلورسولون</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-amber-100 border border-amber-200 p-4 rounded-lg min-w-[240px] text-left md:text-right flex flex-col justify-center">
-                        <span class="text-xs font-bold text-amber-800 block">الكمية الإجمالية الحالية</span>
-                        <span class="text-3xl font-bold text-amber-900 mt-1 font-mono">45</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <div class="border border-slate-100 rounded-lg p-4 bg-slate-50 space-y-3">
-                        <h4 class="font-bold text-sm text-slate-700 border-b pb-2"><i class="fa-solid fa-money-bill-wave ml-1 text-emerald-600"></i> هيكل الأسعار والتعبئة</h4>
-                        <div class="text-xs space-y-2">
-                            <div class="flex justify-between"><span class="text-slate-500">سعر الشراء الأساسي:</span> <span class="font-bold text-blue-700 font-mono">380.00 ج</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">سعر البيع قطاعي:</span> <span class="font-bold text-blue-700 font-mono">450.00 ج</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">سعر البيع جملة:</span> <span class="font-bold text-blue-700 font-mono">420.00 ج</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">سعر الكارتونة:</span> <span class="font-bold text-blue-700 font-mono">5,040.00 ج</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">سعر البالتة:</span> <span class="font-bold text-blue-700 font-mono">50,400.00 ج</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">عدد القطع داخل الكارتونة:</span> <span class="font-bold text-slate-700">12 قطعة</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">عدد الكراتين بالبالتة:</span> <span class="font-bold text-slate-700">10 كرتونة</span></div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="space-y-1.5">
-                            <h4 class="font-bold text-xs text-slate-700"><i class="fa-solid fa-boxes-stacked ml-1 text-indigo-600"></i> دفعات وتواريخ صلاحية الصنف</h4>
-                            <div class="overflow-x-auto rounded border border-slate-200">
-                                <table class="w-full text-right text-xs">
-                                    <thead class="bg-slate-800 text-white font-bold">
-                                        <tr>
-                                            <th class="p-2">رقم التشغيلة</th>
-                                            <th class="p-2">المخزن</th>
-                                            <th class="p-2">الكمية</th>
-                                            <th class="p-2">تاريخ الانتهاء</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200">
-                                        <tr class="hover:bg-slate-50">
-                                            <td class="p-2 font-mono">B-9942</td>
-                                            <td class="p-2">صالة العرض</td>
-                                            <td class="p-2 font-mono">25</td>
-                                            <td class="p-2 font-mono">2027-08-12</td>
-                                        </tr>
-                                        <tr class="hover:bg-slate-50">
-                                            <td class="p-2 font-mono">B-9943</td>
-                                            <td class="p-2">المخزن الرئيسي</td>
-                                            <td class="p-2 font-mono">20</td>
-                                            <td class="p-2 font-mono">2027-09-01</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <h4 class="font-bold text-xs text-slate-700"><i class="fa-solid fa-map-location-dot ml-1 text-indigo-600"></i> توزيع وجرد الكميات داخل المخازن</h4>
-                            <div class="overflow-x-auto rounded border border-slate-200">
-                                <table class="w-full text-right text-xs">
-                                    <thead class="bg-slate-700 text-white font-bold">
-                                        <tr>
-                                            <th class="p-2">اسم المستودع / المخزن</th>
-                                            <th class="p-2">الكمية المتوفرة فيه</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-200">
-                                        <tr>
-                                            <td class="p-2">صالة العرض</td>
-                                            <td class="p-2 font-bold font-mono text-indigo-700">25 قطعة</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="p-2">المخزن الرئيسي</td>
-                                            <td class="p-2 font-bold font-mono text-indigo-700">20 قطعة</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="space-y-2">
-                    <h4 class="font-bold text-sm text-slate-700"><i class="fa-solid fa-rectangle-list ml-1 text-slate-600"></i> سجل حركات المبيعات الأخيرة الصادرة من الصنف</h4>
-                    <div class="overflow-x-auto rounded border border-slate-200 shadow-inner">
-                        <table class="w-full text-right text-xs">
-                            <thead class="bg-slate-800 text-white font-bold">
-                                <tr>
-                                    <th class="p-2.5">الكمية المباعة</th>
-                                    <th class="p-2.5">سعر الشراء وقتها</th>
-                                    <th class="p-2.5">سعر البيع المعمتد</th>
-                                    <th class="p-2.5">إجمالي الربح المحقق</th>
-                                    <th class="p-2.5">تاريخ العملية</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-200 font-mono">
-                                <tr class="hover:bg-blue-50/50">
-                                    <td class="p-2.5 font-bold text-slate-900">5 قطعة</td>
-                                    <td class="p-2.5 text-slate-500">380.00 ج</td>
-                                    <td class="p-2.5 text-blue-700 font-bold">450.00 ج</td>
-                                    <td class="p-2.5 text-emerald-700 font-bold">+350.00 ج</td>
-                                    <td class="p-2.5 text-slate-400">2026-06-04 11:20</td>
-                                    
-                                </tr>
-                                <tr class="hover:bg-blue-50/50 bg-slate-50/50">
-                                    <td class="p-2.5 font-bold text-slate-900">10 قطعة</td>
-                                    <td class="p-2.5 text-slate-500">380.00 ج</td>
-                                    <td class="p-2.5 text-blue-700 font-bold">420.00 ج (جملة)</td>
-                                    <td class="p-2.5 text-emerald-700 font-bold">+400.00 ج</td>
-                                    <td class="p-2.5 text-slate-400">2026-05-28 14:05</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-
-        </main>
-
-    </div>
-
-    <script>
-        function toggleDetailsForm() {
-            const detailsSection = document.getElementById('detailsFormSection');
-            detailsSection.classList.add('animate-pulse');
-            setTimeout(() => detailsSection.classList.remove('animate-pulse'), 500);
+        if (result.status !== "SUCCESS") {
+            alert(result.message);
+            return;
         }
 
-        document.getElementById('txtSearch').addEventListener('input', function(e) {
-            console.log("جاري البحث عن الصنف في مصفوفة البيانات المحاكية الذكية:", e.target.value);
+        allItems = result.data || [];
+
+        renderItems(allItems);
+
+        updateStatistics();
+
+    } catch (ex) {
+
+        console.error(ex);
+
+        alert("فشل الاتصال بالخادم");
+
+    }
+}
+
+function renderItems(items) {
+
+    const container =
+        document.getElementById("itemsContainer");
+
+    container.innerHTML = "";
+
+    if (items.length === 0) {
+
+        container.innerHTML = `
+        <div class="bg-white p-5 rounded shadow text-center">
+            لا توجد أصناف حالياً
+        </div>`;
+
+        return;
+    }
+
+    items.forEach(item => {
+
+        container.innerHTML += `
+        <div class="bg-white p-4 rounded-lg shadow-sm border-r-4 border-blue-500 flex flex-col justify-between">
+
+            <div>
+
+                <h4 class="font-bold text-base">
+                    ${item.Name || ""}
+                </h4>
+
+                <p class="text-xs text-blue-700">
+                    🏢 ${item.Company || "-"}
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    🧪 ${item.ActiveIngredient || "-"}
+                </p>
+
+            </div>
+
+            <div class="text-xs mt-3">
+
+                <p>
+                    🔑 ${item.Code || ""}
+                </p>
+
+                <p>
+                    ⏳ ${item.ExpiryMonths || 0} شهر
+                </p>
+
+                <p>
+                    ⚠️ حد أدنى:
+                    ${item.MinQty || 0}
+                </p>
+
+            </div>
+
+            <button
+                onclick='showItemDetails(${JSON.stringify(item)})'
+                class="mt-3 flat-3d-btn w-full bg-indigo-600 text-white font-bold py-2 rounded text-sm">
+                عرض التفاصيل
+            </button>
+
+        </div>
+        `;
+    });
+}
+
+function showItemDetails(item) {
+
+    document.querySelector("#detailsFormSection h2").innerText =
+        item.Name || "";
+
+    document.querySelector(
+        "#detailsFormSection .text-sm.font-bold.text-slate-500 span"
+    ).innerText =
+        item.Code || "";
+
+    document.querySelector(
+        "#detailsFormSection .text-sm.font-bold.text-blue-700"
+    ).innerText =
+        "🏢 الشركة: " + (item.Company || "");
+
+    document.querySelector(
+        "#detailsFormSection .text-xs.text-slate-600"
+    ).innerText =
+        "🧪 المادة الفعالة: " +
+        (item.ActiveIngredient || "");
+
+    document
+        .getElementById("detailsFormSection")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+function updateStatistics() {
+
+    document.getElementById(
+        "lblStatShortages"
+    ).innerText =
+        allItems.filter(
+            x => Number(x.MinQty || 0) > 0
+        ).length + " صنف";
+
+    document.getElementById(
+        "lblStatExpired"
+    ).innerText = "0 صنف";
+
+    document.getElementById(
+        "lblStatCapital"
+    ).innerText =
+        allItems.length + " صنف";
+
+    document.getElementById(
+        "lblStatProfit"
+    ).innerText =
+        "متصل بالسيرفر";
+}
+
+async function addNewItem() {
+
+    const code =
+        prompt("كود الصنف");
+
+    if (!code)
+        return;
+
+    const name =
+        prompt("اسم الصنف");
+
+    if (!name)
+        return;
+
+    const company =
+        prompt("الشركة");
+
+    const ingredient =
+        prompt("المادة الفعالة");
+
+    const result =
+        await apiPost(
+            "items",
+            {
+                Code: code,
+                Name: name,
+                Company: company,
+                ActiveIngredient: ingredient,
+                ExpiryMonths: 36,
+                MinQty: 5
+            });
+
+    alert(result.message);
+
+    if (
+        result.status === "SUCCESS"
+    ) {
+        loadItems();
+    }
+}
+
+document
+    .querySelector(
+        ".bg-blue-700"
+    )
+    .addEventListener(
+        "click",
+        addNewItem
+    );
+
+document
+    .getElementById(
+        "txtSearch"
+    )
+    .addEventListener(
+        "input",
+        function (e) {
+
+            const search =
+                e.target.value
+                .toLowerCase();
+
+            const filtered =
+                allItems.filter(
+                    x =>
+                        (x.Name || "")
+                        .toLowerCase()
+                        .includes(search)
+                        ||
+                        (x.Code || "")
+                        .toLowerCase()
+                        .includes(search)
+                );
+
+            renderItems(filtered);
         });
 
-        document.getElementById('cbWarehouses').addEventListener('change', function(e) {
-            console.log("تغيير المخزن المستهدف إلى:", e.target.value);
-        });
-    </script>
-</body>
-</html>
+window.onload =
+    loadItems;
+</script>
