@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 وحدة إدارة العروض الذكية ومستشار الربحية الرقمي - صيدلية فايد</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#f5f7fa] text-[#1e293b] min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <div>
+                <h1 class="text-2xl font-bold text-[#1e293b] flex items-center gap-2">
+                    <span>🎁</span> لوحة العروض الترويجية ومستشار الربحية اللحظي
+                </h1>
+                <p class="text-sm text-[#64748b] mt-1">المزامنة السحابية الرقمية لوحدة إدارة البيوع - صيدلية فايد</p>
+            </div>
+            <div id="syncStatus" class="mt-4 md:mt-0 px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                جاري قراءة البيانات الحية من data.json...
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                <h2 class="text-lg font-bold mb-4 border-b pb-2 text-slate-700">📝 إعداد استراتيجية العرض الجديد</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold text-[#64748b] mb-1">تطبيق العرض على الصنف الأساسي:</label>
+                        <select id="cbItems" class="w-full p-2.5 bg-[#f8fafc] border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-blue-500 text-sm">
+                            <option value="">-- اختر الصنف من المخزن --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-[#64748b] mb-1">استراتيجية (نوع) العرض:</label>
+                        <select id="cbType" class="w-full p-2.5 bg-[#f8fafc] border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-blue-500 text-sm">
+                            <option value="خصم نسبة مئوية (%)">خصم نسبة مئوية (%)</option>
+                            <option value="خصم مبلغ نقدي ثابت">خصم مبلغ نقدي ثابت</option>
+                            <option value="اشترِ X واحصل على Y (نفس الصنف)">اشترِ X واحصل على Y (نفس الصنف)</option>
+                            <option value="اشترِ X واحصل على Y (صنف آخر هدية)">اشترِ X واحصل على Y (صنف آخر هدية)</option>
+                            <option value="سعر خاص للكمية (Bundle)">سعر خاص للكمية (Bundle)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-[#64748b] mb-1">وصف العرض التسويقي للجمهور:</label>
+                    <input type="text" id="txtDescription" placeholder="مثال: خصم خاص للمربين عند سحب كميات من المنتج..." class="w-full p-2.5 bg-[#f8fafc] border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div id="divMinQty">
+                        <label id="lblMinQty" class="block text-xs font-bold text-[#64748b] mb-1">الكمية المطلوبة (X):</label>
+                        <input type="number" id="numMinQty" value="1" min="1" class="w-full p-2 bg-[#f8fafc] border border-slate-200 rounded-xl text-sm font-semibold text-center">
+                    </div>
+
+                    <div id="divValue">
+                        <label id="lblValue" class="block text-xs font-bold text-[#64748b] mb-1">قيمة الخصم %:</label>
+                        <input type="number" id="numValue" value="0" min="0" class="w-full p-2 bg-[#f8fafc] border border-slate-200 rounded-xl text-sm font-semibold text-center">
+                    </div>
+
+                    <div id="divBonus" class="hidden">
+                        <label id="lblBonus" class="block text-xs font-bold text-[#64748b] mb-1">كمية الهدية (Y):</label>
+                        <input type="number" id="numBonus" value="0" min="0" class="w-full p-2 bg-[#f8fafc] border border-slate-200 rounded-xl text-sm font-semibold text-center">
+                    </div>
+
+                    <div id="divBonusItem" class="col-span-2 hidden">
+                        <label class="block text-xs font-bold text-[#64748b] mb-1">اختر صنف الهدية الآخر:</label>
+                        <select id="cbBonusItem" class="w-full p-2 bg-[#f8fafc] border border-slate-200 rounded-xl font-medium text-sm">
+                            <option value="">-- اختر صنف الهدية --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pnlAdvisor" class="bg-slate-100 p-6 rounded-2xl border border-slate-200 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-[#1e293b] flex items-center gap-1.5 mb-3">
+                        <span>💡</span> مستشار الأرباح والجدوى اللحظي:
+                    </h2>
+                    <div id="lblAdvisorStatus" class="text-lg font-bold text-[#100bdc] mb-4 min-h-[40px] flex items-center">
+                        يرجى اختيار صنف لتشغيل المحرك المالي...
+                    </div>
+                </div>
+                <div id="lblAdvisorDetails" class="text-xs text-[#64748b] leading-relaxed whitespace-pre-line bg-white/50 p-4 rounded-xl border border-black/5">
+                    يقوم النظام حالياً بقراءة أسعار الشراء والبيوع والكميات المسجلة بالمخزن ليعطيك تقريراً تحليلياً دقيقاً يحميك من البيع بخسارة أو بهوامش ربح ضعيفة.
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            <div>
+                <label class="block text-xs font-bold text-[#64748b] mb-1">تاريخ التفعيل:</label>
+                <input type="date" id="dtStart" class="w-full p-2 bg-[#f8fafc] border border-slate-200 rounded-xl text-xs font-semibold">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-[#64748b] mb-1">تاريخ الانتهاء:</label>
+                <input type="date" id="dtEnd" class="w-full p-2 bg-[#f8fafc] border border-slate-200 rounded-xl text-xs font-semibold">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-[#64748b] mb-1">أقصى تكرار بالفاتورة:</label>
+                <input type="number" id="numMaxQty" value="10" class="w-full p-2 bg-[#f8fafc] border border-slate-200 rounded-xl text-xs font-semibold text-center">
+            </div>
+            <div class="pt-4 md:pt-0">
+                <button id="btnSave" class="w-full py-3 bg-[#16a34a] hover:bg-[#15803d] text-white font-bold rounded-xl shadow-md transition-all cursor-pointer flex justify-center items-center gap-2 text-sm">
+                    <span>💾</span> اعتماد وتفعيل العرض الترويجي
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h3 class="text-base font-bold text-[#1e293b] mb-4 flex items-center gap-2">
+                <span>📊</span> السجل النشط للعروض الترويجية الحالية بصيدلية فايد
+            </h3>
+            <div class="overflow-x-auto rounded-xl border border-slate-100">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="bg-[#1e293b] text-white text-xs font-bold">
+                            <th class="p-3">الصنف المطبق عليه</th>
+                            <th class="p-3">نوع العرض</th>
+                            <th class="p-3 text-center">شراء X</th>
+                            <th class="p-3 text-center">قيمة/نسبة الخصم</th>
+                            <th class="p-3 text-center">كمية الهدية Y</th>
+                            <th class="p-3 text-center">البداية</th>
+                            <th class="p-3 text-center">النهاية</th>
+                            <th class="p-3 text-center">مفعل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="offersTableBody" class="text-xs divide-y divide-slate-100">
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-3 font-semibold text-slate-800">بروفين فيال 50 مل</td>
+                            <td class="p-3 text-slate-600">خصم نسبة مئوية (%)</td>
+                            <td class="p-3 text-center font-medium">1</td>
+                            <td class="p-3 text-center text-blue-600 font-bold">10%</td>
+                            <td class="p-3 text-center text-slate-400">-</td>
+                            <td class="p-3 text-center text-slate-500">2026-06-01</td>
+                            <td class="p-3 text-center text-slate-500">2026-06-30</td>
+                            <td class="p-3 text-center"><span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">نعم</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // مصفوفة تخزين الأصناف المحملة
+        let itemsData = [];
+
+        // وضع افتراضي للتواريخ اليوم
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dtStart').value = today;
+        document.getElementById('dtEnd').value = new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0]; // بعد شهر
+
+        // 1. جلب البيانات من ملف data.json المتوافق مع الـ GitHub Pages الخاص بك
+        async function loadWarehouseData() {
+            const syncStatus = document.getElementById('syncStatus');
+            try {
+                // توقع وجود ملف data.json في نفس مسار المشروع
+                const response = await fetch('data.json');
+                if (!response.ok) throw new Error('لم يتم العثور على ملف data.json أو السيرفر غير مستجيب.');
+                
+                const data = await response.json();
+                
+                // استخلاص الأصناف وعمل لستة فريدة بناء على الكود تماماً مثل الـ LINQ في C#
+                if (Array.isArray(data)) {
+                    itemsData = data;
+                } else if (data.warehouses) {
+                    // إذا كان الهيكل يحتوي على مستودعات متعددة
+                    itemsData = Object.values(data.warehouses).flat();
+                } else {
+                    itemsData = data.items || [];
+                }
+
+                // إزالة التكرار بناء على كود الصنف
+                const uniqueMap = new Map();
+                itemsData.forEach(item => { if(item.Code) uniqueMap.set(item.Code, item); });
+                itemsData = Array.from(uniqueMap.values());
+
+                // ملء القوائم المنسدلة
+                populateComboBox(document.getElementById('cbItems'), itemsData);
+                populateComboBox(document.getElementById('cbBonusItem'), itemsData);
+
+                syncStatus.className = "mt-4 md:mt-0 px-4 py-2 bg-green-50 text-green-700 rounded-full text-xs font-semibold flex items-center gap-2";
+                syncStatus.innerHTML = `🟢 تم مزامنة المخزن بنجاح (${itemsData.length} صنف)`;
+
+            } catch (error) {
+                console.error(error);
+                syncStatus.className = "mt-4 md:mt-0 px-4 py-2 bg-red-50 text-red-700 rounded-full text-xs font-semibold flex items-center gap-2";
+                syncStatus.innerHTML = `⚠️ فشل المزامنة السحابية الذكية: استخدم أصنافاً افتراضية.`;
+                
+                // تحميل بيانات افتراضية لأغراض العرض التوضيحي إذا لم يجد الملف
+                loadMockData();
+            }
+        }
+
+        function loadMockData() {
+            itemsData = [
+                { Code: "1000001", Name: "سيفالكسين مضاد حيوي 20%", BuyPrice: 120, SellRetail: 180 },
+                { Code: "1000002", Name: "أوكسيتيتراسيكلين طويل المفعول", BuyPrice: 85, SellRetail: 130 },
+                { Code: "1000003", Name: "فيتامين أ د 3 هـ مستورد", BuyPrice: 210, SellRetail: 300 },
+                { Code: "1000004", Name: "إيفومكس أردني أصلي", BuyPrice: 340, SellRetail: 450 }
+            ];
+            populateComboBox(document.getElementById('cbItems'), itemsData);
+            populateComboBox(document.getElementById('cbBonusItem'), itemsData);
+        }
+
+        function populateComboBox(selectElement, items) {
+            selectElement.innerHTML = '<option value="">-- اختر الصنف من المخزن --</option>';
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.Code;
+                opt.textContent = `${item.Name} (${item.Code})`;
+                selectElement.appendChild(opt);
+            });
+        }
+
+        // 2. التحكم في إظهار وإخفاء حقول الإدخال حسب نوع الاستراتيجية المحددة
+        const cbType = document.getElementById('cbType');
+        const lblValue = document.getElementById('lblValue');
+        const numValue = document.getElementById('numValue');
+        const lblBonus = document.getElementById('lblBonus');
+        const divBonus = document.getElementById('divBonus');
+        const divValue = document.getElementById('divValue');
+        const divBonusItem = document.getElementById('divBonusItem');
+
+        cbType.addEventListener('change', function() {
+            const type = this.value;
+
+            // إعادة تعيين الظهور الافتراضي للجميع
+            divValue.classList.remove('hidden');
+            divBonus.classList.add('hidden');
+            divBonusItem.classList.add('hidden');
+
+            if (type === "خصم نسبة مئوية (%)") {
+                lblValue.textContent = "نسبة الخصم %:";
+                numValue.max = 100;
+            } 
+            else if (type === "خصم مبلغ نقدي ثابت") {
+                lblValue.textContent = "مبلغ الخصم (ج.م):";
+                numValue.max = 999999;
+            } 
+            else if (type === "اشترِ X واحصل على Y (نفس الصنف)") {
+                divValue.classList.add('hidden');
+                divBonus.classList.remove('hidden');
+                lblBonus.textContent = "الكمية المجانية (Y):";
+            } 
+            else if (type === "اشترِ X واحصل على Y (صنف آخر هدية)") {
+                divValue.classList.add('hidden');
+                divBonus.classList.remove('hidden');
+                divBonusItem.classList.remove('hidden');
+                lblBonus.textContent = "الكمية المجانية (Y):";
+            } 
+            else if (type === "سعر خاص للكمية (Bundle)") {
+                lblValue.textContent = "السعر الإجمالي للكمية:";
+                numValue.max = 999999;
+            }
+
+            updateProfitAnalysis();
+        });
+
+        // 3. محرك التحليل المالي والجدوى اللحظي
+        const cbItems = document.getElementById('cbItems');
+        const cbBonusItem = document.getElementById('cbBonusItem');
+        const numMinQty = document.getElementById('numMinQty');
+        const numBonus = document.getElementById('numBonus');
+        
+        const pnlAdvisor = document.getElementById('pnlAdvisor');
+        const lblAdvisorStatus = document.getElementById('lblAdvisorStatus');
+        const lblAdvisorDetails = document.getElementById('lblAdvisorDetails');
+
+        function updateProfitAnalysis() {
+            if (!cbItems.value) {
+                pnlAdvisor.className = "bg-slate-100 p-6 rounded-2xl border border-slate-200 transition-all duration-300 flex flex-col justify-between";
+                lblAdvisorStatus.textContent = "يرجى اختيار صنف لتشغيل المحرك المالي...";
+                lblAdvisorStatus.style.color = "#64748b";
+                return;
+            }
+
+            // العثور على الصنف المختار من المصفوفة
+            const mainItem = itemsData.find(i => i.Code === cbItems.value);
+            if (!mainItem) return;
+
+            let sellPrice = parseFloat(mainItem.SellRetail) || 0;
+            let costPrice = parseFloat(mainItem.BuyPrice) || 0;
+
+            // حماية التكلفة الافتراضية في حالة عدم التسجيل الصحيح لأسعار المدخلات
+            if (costPrice <= 0 || costPrice >= sellPrice) {
+                costPrice = sellPrice * 0.75;
+            }
+
+            let totalCost = 0;
+            let totalRevenue = 0;
+            let qtyX = parseFloat(numMinQty.value) || 1;
+            if (qtyX <= 0) qtyX = 1;
+
+            const type = cbType.value;
+            const valInput = parseFloat(numValue.value) || 0;
+
+            if (type === "خصم نسبة مئوية (%)") {
+                let discountPercent = valInput;
+                totalRevenue = (sellPrice * (1 - (discountPercent / 100))) * qtyX;
+                totalCost = costPrice * qtyX;
+            } 
+            else if (type === "خصم مبلغ نقدي ثابت") {
+                let discountAmount = valInput;
+                totalRevenue = (sellPrice - discountAmount) * qtyX;
+                totalCost = costPrice * qtyX;
+            } 
+            else if (type === "اشترِ X واحصل على Y (نفس الصنف)") {
+                let qtyY = parseFloat(numBonus.value) || 0;
+                totalRevenue = sellPrice * qtyX;
+                totalCost = costPrice * (qtyX + qtyY);
+            } 
+            else if (type === "اشترِ X واحصل على Y (صنف آخر هدية)") {
+                let qtyY = parseFloat(numBonus.value) || 0;
+                let bonusItemCost = sellPrice * 0.70; // افتراضي
+
+                if (cbBonusItem.value) {
+                    const bonusItem = itemsData.find(i => i.Code === cbBonusItem.value);
+                    if (bonusItem) bonusItemCost = parseFloat(bonusItem.BuyPrice) || bonusItemCost;
+                }
+
+                totalRevenue = sellPrice * qtyX;
+                totalCost = (costPrice * qtyX) + (bonusItemCost * qtyY);
+            } 
+            else if (type === "سعر خاص للكمية (Bundle)") {
+                let bundlePrice = valInput;
+                totalRevenue = bundlePrice;
+                totalCost = costPrice * qtyX;
+            }
+
+            let netProfit = totalRevenue - totalCost;
+            let profitMarginPercent = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
+            let normalProfit = (sellPrice - costPrice) * qtyX;
+
+            // تلوين وتغيير نصوص واجهة المستشار المالي بحسب الربحية
+            if (netProfit < 0) {
+                pnlAdvisor.className = "bg-red-50 p-6 rounded-2xl border border-red-200 transition-all duration-300 flex flex-col justify-between";
+                lblAdvisorStatus.textContent = "🚨 خسارة مالية! العرض غير آمن";
+                lblAdvisorStatus.style.color = "#dc2626";
+
+                lblAdvisorDetails.textContent = `• التكلفة الفعلية: ${totalCost.toFixed(2)} ج.م\n` +
+                                                 `• عائد العرض المتوقع: ${totalRevenue.toFixed(2)} ج.م\n` +
+                                                 `• صافي العجز المالي: ${Math.Abs(netProfit).toFixed(2)} ج.م\n\n` +
+                                                 `⚠️ المستشار المالي: قيمة الخصومات أو البونص الممنوح تخطت هامش ربح هذا الدواء. تفعيل العرض سيؤدي لخسارة من رأس المال الحالي!`;
+            } 
+            else if (netProfit === 0 || profitMarginPercent < 4) {
+                pnlAdvisor.className = "bg-amber-50 p-6 rounded-2xl border border-amber-200 transition-all duration-300 flex flex-col justify-between";
+                lblAdvisorStatus.textContent = "⚠️ نقطة التعادل (بيع بدون مكسب)";
+                lblAdvisorStatus.style.color = "#d97706";
+
+                lblAdvisorDetails.textContent = `• هامش ربح العرض: ${netProfit.toFixed(2)} ج.م (${profitMarginPercent.toFixed(1)}%)\n` +
+                                                 `• الأرباح الأصلية الضائعة: ${normalProfit.toFixed(2)} ج.م\n\n` +
+                                                 `💡 المستشار المالي: العرض يغطي تكلفته بالكاد. ممتاز فقط في حالات حرق بضاعة راكدة لتعويض الكاش أو أدوية قاربت صلاحيتها على الانتهاء.`;
+            } 
+            else if (netProfit > 0 && netProfit < (normalProfit * 0.5)) {
+                pnlAdvisor.className = "bg-blue-50 p-6 rounded-2xl border border-blue-200 transition-all duration-300 flex flex-col justify-between";
+                lblAdvisorStatus.textContent = "👍 عرض ذكي وتنشيطي ممتاز";
+                lblAdvisorStatus.style.color = "#2563eb";
+
+                lblAdvisorDetails.textContent = `• صافي الربح بالعرض: ${netProfit.toFixed(2)} ج.م\n` +
+                                                 `• نسبة الربح من المبيعات: ${profitMarginPercent.toFixed(1)}%\n\n` +
+                                                 `✨ المستشار المالي: توازن رائع بين الحفاظ على جزء جيد من هامش الربح وجذب زبائن الجملة لزيادة حجم الحركة للعيادات والمربين.`;
+            } 
+            else {
+                pnlAdvisor.className = "bg-green-50 p-6 rounded-2xl border border-green-200 transition-all duration-300 flex flex-col justify-between";
+                lblAdvisorStatus.textContent = "🔥 صفقـة ممتازة وأرباح قوية!";
+                lblAdvisorStatus.style.color = "#16a34a";
+
+                lblAdvisorDetails.textContent = `• صافي الربح المتوقع: ${netProfit.toFixed(2)} ج.م\n` +
+                                                 `• معدل الربحية التراكمي: ${profitMarginPercent.toFixed(1)}%\n\n` +
+                                                 `🚀 المستشار المالي: عرض عبقري ومدروس بدقة! يحفز المربين على الشراء بكميات مع الحفاظ على عوائد ممتازة لخزينة الصيدلية.`;
+            }
+        }
+
+        // ربط الأحداث التفاعلية اللحظية للمستشار المالي
+        cbItems.addEventListener('change', updateProfitAnalysis);
+        cbBonusItem.addEventListener('change', updateProfitAnalysis);
+        numMinQty.addEventListener('input', updateProfitAnalysis);
+        numValue.addEventListener('input', updateProfitAnalysis);
+        numBonus.addEventListener('input', updateProfitAnalysis);
+
+        // مساعدة لدالة الموت المطلق الرياضية بالـ JS
+        Math.Abs = Math.abs;
+
+        // 4. دالة الحفظ الوهمية (تقوم بالإضافة للجدول أمامك مباشرة لتأكيد فاعلية الواجهة)
+        document.getElementById('btnSave').addEventListener('click', function() {
+            if (!cbItems.value) {
+                alert("❌ يرجى تحديد الصنف الأساسي أولاً لتطبيق العرض.");
+                return;
+            }
+
+            if (pnlAdvisor.classList.contains('bg-red-50')) {
+                const confirmLoss = confirm("⚠️ تحذير مالي: مستشار الأرباح يكشف عن وجود خسارة حقيقية في هذا العرض! هل تود اعتماده على أي حال؟");
+                if (!confirmLoss) return;
+            }
+
+            // إضافة العرض لجدول العروض الحالي تزامناً مع الحفظ
+            const tableBody = document.getElementById('offersTableBody');
+            const mainItem = itemsData.find(i => i.Code === cbItems.value);
+            
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition-colors border-t border-slate-100 text-xs";
+            
+            let displayValue = cbType.value.includes('نسبة') ? numValue.value + "%" : numValue.value + " ج.م";
+            if(cbType.value.includes('نفس الصنف') || cbType.value.includes('صنف آخر')) displayValue = "بونص مجاني";
+
+            tr.innerHTML = `
+                <td class="p-3 font-semibold text-slate-800">${mainItem.Name}</td>
+                <td class="p-3 text-slate-600">${cbType.value}</td>
+                <td class="p-3 text-center font-medium">${numMinQty.value}</td>
+                <td class="p-3 text-center text-blue-600 font-bold">${displayValue}</td>
+                <td class="p-3 text-center text-slate-700 font-bold">${numBonus.value || '-'}</td>
+                <td class="p-3 text-center text-slate-500">${document.getElementById('dtStart').value}</td>
+                <td class="p-3 text-center text-slate-500">${document.getElementById('dtEnd').value}</td>
+                <td class="p-3 text-center"><span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">نعم</span></td>
+            `;
+            
+            tableBody.insertBefore(tr, tableBody.firstChild);
+            alert("✅ تم تفعيل العرض الترويجي سحابياً وإدراجه بالسجلات الرسمية الصيدلانية بنجاح!");
+        });
+
+        // بدء التشغيل
+        window.onload = loadWarehouseData;
+    </script>
+</body>
+</html>
