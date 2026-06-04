@@ -3,362 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚙ لوحة التحكم الموحدة في وحدات القياس وأسعار الأصناف</title>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>🎛️ البوابة الموحدة | منظومة إدارة الصيدلية والمخازن البيطرية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f0f2f5; color: #333; padding: 25px; }
-        .main-layout { max-width: 900px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
         
-        /* 1. شريط البحث والمخزن */
-        .top-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 15px; }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        .form-group label { font-weight: bold; color: #2c3e50; font-size: 14px; }
-        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; outline: none; background-color: #fff; }
-        input:focus, select:focus { border-color: #3498db; }
+        :root {
+            --bg-main: #dce0e6;       /* خلفية النافذة أغمق بدرجة ناعمة */
+            --bg-panels: #ebeff5;     /* لوحات جانبية وعلوية متناسقة */
+            --text-primary: #212f3d;  /* نصوص داكنة فخمة */
+            --border-color: #c3cbd6;  /* حدود أنعم وأوضح */
+        }
 
-        /* 2. هيدر الصنف المختار */
-        .item-header { background-color: #2c3e50; color: white; padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 18px; margin-bottom: 20px; transition: background 0.3s; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+        }
 
-        /* 3 & 4. المجموعات (Fieldsets) */
-        fieldset { border: 1px solid #ddd; border-radius: 6px; padding: 20px; margin-bottom: 20px; }
-        legend { font-weight: bold; padding: 0 10px; font-size: 15px; }
-        .grp-inputs { color: #2c3e50; }
-        .grp-outputs { border-color: #27ae60; color: #27ae60; }
-        
-        .grid-inputs, .grid-outputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-        .readonly-field { background-color: #eceff1; font-weight: bold; text-align: center; color: #2c3e50; }
+        /* تأثير الأزرار الفلات ثلاثية الأبعاد (Flat 3D Buttons) المخصصة للتطبيق */
+        .flat-3d-btn {
+            transition: all 0.15s ease;
+            box-shadow: 0 5px 0px 0px rgba(0, 0, 0, 0.15);
+            position: relative;
+            top: 0;
+        }
 
-        /* 5. شريط الأزرار السفلي بتأثير 3D ناعم عند الضغط */
-        .bottom-bar { display: flex; gap: 15px; justify-content: flex-start; flex-wrap: wrap; margin-top: 10px; }
-        .btn { padding: 12px 20px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 15px; transition: all 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
-        
-        .btn-save { background-color: #2ecc71; }
-        .btn-show-all { background-color: #3498db; }
-        .btn-units12 { background-color: #9b59b6; }
+        .flat-3d-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0px 0px rgba(0, 0, 0, 0.12);
+        }
 
-        /* نافذة العرض المنبثقة (Modal) بديل الـ ShowDialog */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #f5f6fa; width: 95%; max-width: 1050px; height: 80vh; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .modal-header { background-color: #3498db; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 16px; position: relative; }
-        .modal-close { position: absolute; left: 15px; top: 12px; background: #c0392b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
-        .table-wrapper { overflow-auto: auto; padding: 20px; flex: 1; }
-        table { width: 100%; border-collapse: collapse; background: white; text-align: center; }
-        th, td { padding: 12px; border: 1px solid #ddd; }
-        th { background-color: #2c3e50; color: white; font-weight: bold; }
-        tr:nth-child(even) { background-color: #f0f4f8; }
+        .flat-3d-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0px 0px transparent;
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen p-4 md:p-8">
 
-<div class="main-layout">
-    <div class="top-panel">
-        <div class="form-group">
-            <label>📦 مخزن الاستلام:</label>
-            <select id="cbWarehouses" onchange="loadItemsFromSelectedWarehouse()">
-                <option value="صالة العرض">صالة العرض</option>
-                <option value="المخزن الرئيسي">المخزن الرئيسي</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>🔍 ابحث عن الصنف:</label>
-            <input type="text" id="txtSearch" placeholder="اكتب اسم الصنف أو الباركود..." oninput="handleSearch()">
-        </div>
-    </div>
-
-    <div id="lblItemHeader" class="item-header">
-        🔍 يرجى كتابة اسم الصنف أو كود الباركود للبدء في إدارة الوحدات وتوحيدها
-    </div>
-
-    <fieldset>
-        <legend class="grp-inputs">✏ البيانات الأساسية ووحدات القياس (قم بإدخالها هنا)</legend>
-        <div class="grid-inputs">
-            <div class="form-group">
-                <label>سعر التجزئة (ج.م):</label>
-                <input type="number" id="txtSellUnit" oninput="liveCalculatePrices()">
-            </div>
-            <div class="form-group">
-                <label>القطع بالكرتونة:</label>
-                <input type="number" id="txtPiecePerCarton" oninput="liveCalculatePrices()">
-            </div>
-            <div class="form-group">
-                <label>الكراتين بالبالتة:</label>
-                <input type="number" id="txtCartonsPerPallet" oninput="liveCalculatePrices()">
-            </div>
-            <div class="form-group">
-                <label>إجمالي وحدات البالتة:</label>
-                <input type="text" id="txtUnitsPerPallet" class="readonly-field" readonly>
-            </div>
-            <div class="form-group">
-                <label>وزن العبوة (جرام):</label>
-                <input type="number" id="txtGramsPerUnit" oninput="liveCalculatePrices()">
-            </div>
-            <div class="form-group">
-                <label>حجم العبوة (سنتي/مل):</label>
-                <input type="number" id="txtCmPerUnit" oninput="liveCalculatePrices()">
-            </div>
-            <div class="form-group">
-                <label>زيادة عامة إضافية:</label>
-                <input type="number" id="txtExtraPrice" value="0" oninput="liveCalculatePrices()">
-            </div>
-        </div>
-    </fieldset>
-
-    <fieldset style="border-color: #27ae60;">
-        <legend class="grp-outputs">📊 جدول الأسعار والكسور المحسوبة تلقائياً (تحديث لحظي)</legend>
-        <div class="grid-outputs">
-            <div class="form-group">
-                <label>📦 سعر الكرتونة التلقائي:</label>
-                <input type="text" id="txtCalcCartonPrice" class="readonly-field" readonly>
-            </div>
-            <div class="form-group">
-                <label>⚖ سعر البالتة الإجمالي:</label>
-                <input type="text" id="txtCalcPalletPrice" class="readonly-field" readonly>
-            </div>
-            <div class="form-group">
-                <label>🧪 سعر الجرام الواحد:</label>
-                <input type="text" id="txtCalcGramPrice" class="readonly-field" readonly>
-            </div>
-            <div class="form-group">
-                <label>💧 سعر السنتي/المل:</label>
-                <input type="text" id="txtCalcSentiPrice" class="readonly-field" readonly>
-            </div>
-        </div>
-    </fieldset>
-
-    <div class="bottom-bar">
-        <button class="btn btn-save" onclick="btnSave_Click()">💾 حفظ البيانات وتوحيدها فوراً على كل المخازن</button>
-        <button class="btn btn-show-all" onclick="btnShowAll_Click()">📋 استعراض أصناف المخزن الحالي</button>
-        <button class="btn btn-units12" onclick="alert('فتح نافذة وحدات 12')">📦 إدارة وحدات الأصناف 12</button>
-    </div>
-</div>
-
-<div id="showItemsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header" id="modalTitle">
-            بيان شامل بالوحدات
-            <button class="modal-close" onclick="closeModal()">إغلاق ❌</button>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>الباركود</th>
-                        <th>اسم الصنف العالمي</th>
-                        <th>سعر التجزئة</th>
-                        <th>القطع/الكرتونة</th>
-                        <th>الكراتين/البالتة</th>
-                        <th>إجمالي البالتة</th>
-                        <th>الوزن (جرام)</th>
-                        <th>الحجم (سنتي)</th>
-                        <th>سعر الكرتونة</th>
-                        <th>سعر البالتة</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<script>
-    // 🔗 اربط هنا رابط الـ Web App اللي أخذته من الـ Google Apps Script
-    const GOOGLE_SCRIPT_URL = "رابط_جوجل_apps_script_هنا";
-
-    let allItems = [];
-    let currentItem = null;
-
-    // استدعاء البيانات من جوجل شيت عند فتح الصفحة تلقائياً
-    window.onload = function() {
-        fetchItemsFromGoogle();
-    };
-
-    function fetchItemsFromGoogle() {
-        document.getElementById('lblItemHeader').innerText = "🔄 جاري تحميل البيانات ومزامنتها من السيرفر السحابي...";
-        fetch(GOOGLE_SCRIPT_URL)
-            .then(res => res.json())
-            .then(data => {
-                allItems = data;
-                resetFormState();
-            })
-            .catch(err => {
-                document.getElementById('lblItemHeader').innerText = "❌ فشل الاتصال بالسيرفر السحابي لجوجل";
-                document.getElementById('lblItemHeader').style.backgroundColor = "#c0392b";
-            });
-    }
-
-    function loadItemsFromSelectedWarehouse() {
-        handleSearch(); // إعادة فلترة بناءً على المخزن المحدد
-    }
-
-    // دالة البحث المتطابقة مع السي شارب TxtSearch_TextChanged
-    function handleSearch() {
-        let search = document.getElementById('txtSearch').value.trim().toLowerCase();
-        let selectedWarehouse = document.getElementById('cbWarehouses').value;
-        let header = document.getElementById('lblItemHeader');
-
-        if (!search || !allItems) {
-            resetFormState();
-            return;
-        }
-
-        // الفلترة بالاسم أو الكود ومطابقة المخزن
-        currentItem = allItems.find(i => 
-            ((i.Name && i.Name.toLowerCase().includes(search)) || (i.Code && i.Code.toString().includes(search)))
-            && (i.Warehouse === selectedWarehouse)
-        );
-
-        if (currentItem) {
-            header.innerText = `📦 [${currentItem.Code}] - ${currentItem.Name} | متوفر في: ${currentItem.Warehouse}`;
-            header.style.backgroundColor = "#27ae60";
-
-            document.getElementById('txtSellUnit').value = currentItem.SellRetail;
-            document.getElementById('txtPiecePerCarton').value = currentItem.PiecePerCarton;
-            document.getElementById('txtCartonsPerPallet').value = currentItem.CartonsPerPallet;
-            document.getElementById('txtUnitsPerPallet').value = currentItem.UnitsPerPallet;
-            document.getElementById('txtGramsPerUnit').value = currentItem.GramsPerUnit;
-            document.getElementById('txtCmPerUnit').value = currentItem.CmPerUnit;
-            document.getElementById('txtExtraPrice').value = "0";
-
-            liveCalculatePrices();
-        } else {
-            header.innerText = "❌ هذا الصنف غير مسجل أو غير متاح في هذا المخزن حالياً";
-            header.style.backgroundColor = "#c0392b";
-            clearFields();
-        }
-    }
-
-    // دالة الحسابات اللحظية المطابقة لـ LiveCalculatePrices
-    function liveCalculatePrices() {
-        if (!currentItem) return;
-
-        let unitPrice = parseFloat(document.getElementById('txtSellUnit').value) || 0;
-        let piecePerCarton = parseFloat(document.getElementById('txtPiecePerCarton').value) || 0;
-        let cartonsPerPallet = parseFloat(document.getElementById('txtCartonsPerPallet').value) || 0;
-        let grams = parseFloat(document.getElementById('txtGramsPerUnit').value) || 0;
-        let cm = parseFloat(document.getElementById('txtCmPerUnit').value) || 0;
-        let extra = parseFloat(document.getElementById('txtExtraPrice').value) || 0;
-
-        let finalBasePrice = unitPrice + extra;
-
-        let totalUnitsPerPallet = piecePerCarton * cartonsPerPallet;
-        document.getElementById('txtUnitsPerPallet').value = totalUnitsPerPallet;
-
-        let cartonPrice = finalBasePrice * piecePerCarton;
-        let palletPrice = cartonPrice * cartonsPerPallet;
-
-        let gramPrice = grams > 0 ? (finalBasePrice / grams) : 0;
-        let sentiPrice = cm > 0 ? (finalBasePrice / cm) : 0;
-
-        document.getElementById('txtCalcCartonPrice').value = cartonPrice.toFixed(2) + " ج.م";
-        document.getElementById('txtCalcPalletPrice').value = palletPrice.toFixed(2) + " ج.م";
-        document.getElementById('txtCalcGramPrice').value = gramPrice.toFixed(3) + " ج.م";
-        document.getElementById('txtCalcSentiPrice').value = sentiPrice.toFixed(3) + " ج.m";
-    }
-
-    // دالة الحفظ وإرسال طلب POST لجوجل شيت توازي BtnSave_Click
-    function btnSave_Click() {
-        if (!currentItem) {
-            alert("يرجى استدعاء صنف صالح أولاً قبل الحفظ.");
-            return;
-        }
-
-        let extra = parseFloat(document.getElementById('txtExtraPrice').value) || 0;
+    <div class="max-w-7xl mx-auto space-y-6">
         
-        let updatedData = {
-            Code: currentItem.Code,
-            Name: currentItem.Name,
-            SellRetail: parseFloat(document.getElementById('txtSellUnit').value) + extra,
-            PiecePerCarton: parseFloat(document.getElementById('txtPiecePerCarton').value) || 0,
-            CartonsPerPallet: parseFloat(document.getElementById('txtCartonsPerPallet').value) || 0,
-            UnitsPerPallet: parseFloat(document.getElementById('txtUnitsPerPallet').value) || 0,
-            GramsPerUnit: parseFloat(document.getElementById('txtGramsPerUnit').value) || 0,
-            CmPerUnit: parseFloat(document.getElementById('txtCmPerUnit').value) || 0,
-            Warehouse: document.getElementById('cbWarehouses').value
-        };
-
-        document.getElementById('lblItemHeader').innerText = "⏳ جاري حفظ وتوحيد البيانات سحابياً...";
-        document.getElementById('lblItemHeader').style.backgroundColor = "#f39c12";
-
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', // لتفادي مشاكل الـ CORS مع جوجل سكريبت
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedData)
-        }).then(() => {
-            alert(`✔ تم بنجاح تعديل وحساب الوحدات وتوحيدها لصنف [${updatedData.Name}] سحابياً.`);
-            fetchItemsFromGoogle(); // تحديث القائمة المحلية
-        }).catch(err => {
-            alert("خطأ أثناء الحفظ: " + err);
-        });
-    }
-
-    // دالة استعراض الجدول الشامل توازي BtnShowAll_Click
-    function btnShowAll_Click() {
-        let currentWarehouseName = document.getElementById('cbWarehouses').value;
-        let filteredItems = allItems.filter(i => i.Warehouse === currentWarehouseName);
-
-        if (!filteredItems.length) {
-            alert("المخزن الحالي فارغ أو لم يتم تحميل البيانات بعد.");
-            return;
-        }
-
-        document.getElementById('modalTitle').innerHTML = `📊 بيان شامل بكل الوحدات والكسور والأسعار المسجلة حالياً في: ${currentWarehouseName} <button class="modal-close" onclick="closeModal()">إغلاق ❌</button>`;
-        
-        let tbody = document.getElementById('tableBody');
-        tbody.innerHTML = "";
-
-        filteredItems.forEach(item => {
-            let sell = parseFloat(item.SellRetail) || 0;
-            let pc = parseFloat(item.PiecePerCarton) || 0;
-            let cp = parseFloat(item.CartonsPerPallet) || 0;
+        <header class="bg-[#ebeff5] rounded-xl p-6 border border-[#c3cbd6] flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-[#2980b9] text-white rounded-xl shadow-inner">
+                    <i class="fa-solid fa-laptop-code text-3xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#212f3d]">لوحة التحكم والبوابة السحابية الموحدة</h1>
+                    <p class="text-sm text-[#6e7885] mt-1">VeterinaryPharmacyClean3 • إدارة د. أحمد إبراهيم</p>
+                </div>
+            </div>
             
-            let cartonPrice = sell * pc;
-            let palletPrice = cartonPrice * cp;
+            <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-3 py-2 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg font-semibold flex items-center gap-1.5 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    خادم GitHub Pages: متصل ونشط
+                </span>
+                <span class="px-3 py-2 bg-blue-100 text-blue-800 border border-blue-300 rounded-lg font-semibold flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-sync fa-spin"></i>
+                    مزامنة SQLite / JSON: تلقائية
+                </span>
+            </div>
+        </header>
 
-            let row = `<tr>
-                <td>${item.Code || '-'}</td>
-                <td style="font-weight:bold; text-align:right;">${item.Name || '-'}</td>
-                <td>${sell.toFixed(2)} ج.م</td>
-                <td>${pc}</td>
-                <td>${cp}</td>
-                <td>${item.UnitsPerPallet || (pc * cp)}</td>
-                <td>${item.GramsPerUnit || 0}</td>
-                <td>${item.CmPerUnit || 0}</td>
-                <td>${cartonPrice.toFixed(2)} ج.م</td>
-                <td>${palletPrice.toFixed(2)} ج.م</td>
-            </tr>`;
-            tbody.innerHTML += row;
-        });
+        <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <a href="price-control.html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-blue-50 text-[#2980b9] rounded-lg border border-blue-100">
+                        <i class="fa-solid fa-scale-balanced text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-blue-50 text-[#2980b9] rounded border border-blue-100">price-control.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">التحكم بالأسعار وتفكيك العبوات</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">حساب أسعار التجزئة والقطاعي والجملة، وحساب أسعار الجرام والسنتي تلقائياً وهامش الربح المتوقع.</p>
+                </div>
+            </a>
 
-        document.getElementById('showItemsModal').style.display = 'flex';
-    }
+            <a href="Warehouse.html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-emerald-50 text-[#27ae60] rounded-lg border border-emerald-100">
+                        <i class="fa-solid fa-boxes-stacked text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-emerald-50 text-[#27ae60] rounded border border-emerald-100">Warehouse.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">نظام إدارة المخازن المتطورة</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">عرض جرد صالة العرض والمستودعات الاحتياطية، مع ميزة التلوين التلقائي للنواقص الحرجة.</p>
+                </div>
+            </a>
 
-    function closeModal() {
-        document.getElementById('showItemsModal').style.display = 'none';
-    }
+            <a href="ItemDetails.html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-indigo-50 text-[#3949ab] rounded-lg border border-indigo-100">
+                        <i class="fa-solid fa-chart-pie text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-indigo-50 text-[#3949ab] rounded border border-indigo-100">ItemDetails.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">تفاصيل الأصناف وجرد المخازن السريع</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">عرض إحصائيات رأس المال بالمخزن، الأرباح، تواريخ الصلاحية، وسجلات الحركات المبيعية الأخيرة.</p>
+                </div>
+            </a>
 
-    function resetFormState() {
-        currentItem = null;
-        document.getElementById('lblItemHeader').innerText = "🔍 يرجى كتابة اسم الصنف أو كود الباركود للبدء في إدارة الوحدات وتوحيدها";
-        document.getElementById('lblItemHeader').style.backgroundColor = "#2c3e50";
-        clearFields();
-    }
+            <a href="PurchaseInvoice .html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-amber-50 text-[#d35400] rounded-lg border border-amber-100">
+                        <i class="fa-solid fa-file-invoice-dollar text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-amber-50 text-[#d35400] rounded border border-amber-100">PurchaseInvoice.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">إدارة المشتريات وفواتير الوارد</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">تسجيل الوارد من الشركات والموردين، وضخ الكميات للمستودعات وحساب تاريخ انتهاء الصلاحية الآلي.</p>
+                </div>
+            </a>
 
-    function clearFields() {
-        document.getElementById('txtSellUnit').value = "";
-        document.getElementById('txtPiecePerCarton').value = "";
-        document.getElementById('txtCartonsPerPallet').value = "";
-        document.getElementById('txtUnitsPerPallet').value = "";
-        document.getElementById('txtGramsPerUnit').value = "";
-        document.getElementById('txtCmPerUnit').value = "";
-        document.getElementById('txtExtraPrice').value = "";
-        document.getElementById('txtCalcCartonPrice').value = "";
-        document.getElementById('txtCalcPalletPrice').value = "";
-        document.getElementById('txtCalcGramPrice').value = "";
-        document.getElementById('txtCalcSentiPrice').value = "";
-    }
-</script>
+            <a href="User.html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-purple-50 text-[#8e44ad] rounded-lg border border-purple-100">
+                        <i class="fa-solid fa-user-shield text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-purple-50 text-[#8e44ad] rounded border border-purple-100">User.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">صلاحيات المستخدمين والـ WinForms</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">فحص ومتابعة صلاحيات الموظفين، والمجموعات النشطة بالتطبيق المكتبي الأساسي من خلال ملف المزامنة.</p>
+                </div>
+            </a>
+
+            <a href="Formula.html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-rose-50 text-[#c0392b] rounded-lg border border-rose-100">
+                        <i class="fa-solid fa-ruler-combined text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-rose-50 text-[#c0392b] rounded border border-rose-100">Formula.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">وحدات القياس ونسب التحويل الثابتة</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">إدارة وضبط معاملات التحويل الرياضية بين الكرتونة، العبوة، والجرام لمنع حدوث فروقات جرد حركية.</p>
+                </div>
+            </a>
+
+            <a href="items.html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-cyan-50 text-[#00838f] rounded-lg border border-cyan-100">
+                        <i class="fa-solid fa-barcode text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-cyan-50 text-[#00838f] rounded border border-cyan-100">items.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">إدارة وتكويد الأصناف الموحد</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">تكويد الأدوية والمستلزمات البيطرية الجديدة بنظام الـ 7 أرقام المتسلسلة والمواد الفعالة.</p>
+                </div>
+            </a>
+
+            <a href="offers.html" class="flat-3d-btn bg-white border border-[#c3cbd6] rounded-xl p-5 flex flex-col justify-between h-48 cursor-pointer">
+                <div class="flex justify-between items-start">
+                    <div class="p-3 bg-pink-50 text-[#c2185b] rounded-lg border border-pink-100">
+                        <i class="fa-solid fa-gift text-2xl"></i>
+                    </div>
+                    <span class="text-xs font-bold px-2 py-1 bg-pink-50 text-[#c2185b] rounded border border-pink-100">offers.html</span>
+                </div>
+                <div class="mt-4">
+                    <h2 class="text-lg font-bold text-[#212f3d]">إدارة العروض ومستشار الربحية الرقمي</h2>
+                    <p class="text-xs text-[#6e7885] mt-1 line-clamp-2">برمجة عروض الخصومات والبونص والـ Free Goods الواردة من الشركات لضمان أعلى ربحية ممكنة للفاتورة.</p>
+                </div>
+            </a>
+
+        </main>
+
+        <footer class="text-center text-xs text-[#6e7885] pt-4 border-t border-[#c3cbd6]">
+            جميع الحقوق محفوظة © 2026 د. أحمد إبراهيم • لوحة المزامنة السحابية المتكاملة لبرنامج <span class="font-semibold text-[#212f3d]">VeterinaryPharmacyClean3</span>
+        </footer>
+    </div>
+
 </body>
 </html>
