@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ لوحة التحكم الذكية بالأسعار وهياكل التعبئة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+        /* تصميم مخصص للـ 3D Buttons المتناسقة مع تفضيلاتك */
+        .btn-3d {
+            transition: all 0.1s ease-wrap;
+            box-shadow: 0 4px 0px 0px rgba(0,0,0,0.25);
+        }
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px 0px rgba(0,0,0,0.25);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto space-y-6">
+
+        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-end">
+            <div class="w-full space-y-2">
+                <label class="block text-slate-700 font-bold text-sm"><i class="fa-solid fa-magnifying-glass text-blue-600 ml-1"></i> ابحث باسم الصنف أو الكود:</label>
+                <input type="text" id="txtSearch" placeholder="اكتب اسم الصنف أو الكود واضغط فحص..." class="w-full p-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-lg text-slate-800">
+            </div>
+            <button onclick="searchItemMock()" class="w-full md:w-52 h-12 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded btn-3d active:bg-blue-900 flex items-center justify-center gap-2">
+                <span>🔍 فحص واستدعاء</span>
+            </button>
+        </div>
+
+        <div class="bg-slate-800 text-white p-5 rounded-lg shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
+            <div id="lblItemNameHeader" class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-box-open text-blue-400"></i> يرجى البحث لعرض الهيكل المالي...
+            </div>
+            <div id="lblStockQty" class="text-xl font-bold text-yellow-400 bg-slate-700/50 px-4 py-2 rounded border border-slate-600">
+                الرصيد الفعلي: 0 وحدة
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4">
+                <h2 class="text-slate-900 font-bold text-lg border-b pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-money-bill-wave text-green-600"></i> قائمة الأسعار والمؤشرات الحسابية
+                </h2>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="text-slate-600 font-medium">سعر الشراء الأساسي:</label>
+                        <input type="number" id="nudBuyPrice" value="0.00" step="0.01" min="0" oninput="recalculate()" class="w-44 p-2 border border-gray-300 rounded text-center font-bold text-slate-800 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-slate-600 font-medium">سعر البيع قطاعي:</label>
+                        <input type="number" id="nudSellRetail" value="0.00" step="0.01" min="0" oninput="recalculate()" class="w-44 p-2 border border-gray-300 rounded text-center font-bold text-slate-800 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-slate-600 font-medium">سعر البيع جملة:</label>
+                        <input type="number" id="nudSellWholesale" value="0.00" step="0.01" min="0" oninput="recalculate()" class="w-44 p-2 border border-gray-300 rounded text-center font-bold text-slate-800 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-50 p-1.5 rounded">
+                        <label class="text-slate-600 font-medium">سعر الكارتونة (تلقائي):</label>
+                        <input type="number" id="nudCartonPrice" value="0.00" readonly class="w-44 p-2 bg-gray-100 border border-gray-300 rounded text-center font-bold text-slate-700 outline-none">
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-50 p-1.5 rounded">
+                        <label class="text-slate-600 font-medium">سعر البالتة (تلقائي):</label>
+                        <input type="number" id="nudPalletPrice" value="0.00" readonly class="w-44 p-2 bg-gray-100 border border-gray-300 rounded text-center font-bold text-slate-700 outline-none">
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-50 p-1.5 rounded">
+                        <label class="text-slate-600 font-medium">سعر الجرام الصافي:</label>
+                        <input type="number" id="nudGramPrice" value="0.00" readonly class="w-44 p-2 bg-gray-100 border border-gray-300 rounded text-center font-bold text-slate-700 outline-none">
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-50 p-1.5 rounded">
+                        <label class="text-slate-600 font-medium">سعر السنتي/مل الصافي:</label>
+                        <input type="number" id="nudSentiPrice" value="0.00" readonly class="w-44 p-2 bg-gray-100 border border-gray-300 rounded text-center font-bold text-slate-700 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-dashed">
+                    <div class="p-3 bg-green-50 rounded border border-green-200">
+                        <div id="lblProfitRetail" class="font-bold text-green-700 text-sm">ربح القطاعي: 0.00 ج.م</div>
+                        <div id="lblMarginRetail" class="text-xs text-gray-500 mt-1">هامش القطاعي: 0%</div>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded border border-purple-200">
+                        <div id="lblProfitWholesale" class="font-bold text-purple-700 text-sm">ربح الجملة: 0.00 ج.م</div>
+                        <div id="lblMarginWholesale" class="text-xs text-gray-500 mt-1">هامش الجملة: 0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 space-y-4 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-slate-900 font-bold text-lg border-b pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-blue-600"></i> هياكل التعبئة ووحدات التجزئة
+                    </h2>
+                    
+                    <div class="space-y-3 mt-4">
+                        <div class="flex items-center justify-between">
+                            <label class="text-slate-600 font-medium">عدد القطع داخل الكارتونة:</label>
+                            <input type="number" id="nudPiecePerCarton" value="0" min="0" oninput="recalculate()" class="w-44 p-2 border border-gray-300 rounded text-center font-bold text-slate-800 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="text-slate-600 font-medium">عدد الكراتين بالبالتة:</label>
+                            <input type="number" id="nudCartonsPerPallet" value="0" min="0" oninput="recalculate()" class="w-44 p-2 border border-gray-300 rounded text-center font-bold text-slate-800 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="text-slate-600 font-medium">الوزن الصافي (جرام) للعبوة:</label>
+                            <input type="number" id="nudGramsPerUnit" value="0" min="0" oninput="recalculate()" class="w-44 p-2 border border-gray-300 rounded text-center font-bold text-slate-800 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label class="text-slate-600 font-medium">الحجم الصافي (سنتي) للعبوة:</label>
+                            <input type="number" id="nudCmPerUnit" value="0" min="0" oninput="recalculate()" class="w-44 p-2 border border-gray-300 rounded text-center font-bold text-slate-800 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-blue-50/70 rounded-lg border border-blue-100 space-y-2 mt-4">
+                    <div id="lblTotalStockValueBuy" class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-coins text-amber-600"></i> 💰 القيمة الشرائية للمخزون: 0.00 ج.م
+                    </div>
+                    <div id="lblTotalStockValueSell" class="font-bold text-blue-700 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-blue-600"></i> 📈 القيمة البيعية للمخزون: 0.00 ج.م
+                    </div>
+                    <div class="text-xs text-slate-500 pt-2 border-t border-blue-200/50 flex items-start gap-1">
+                        <i class="fa-solid fa-circle-info text-blue-500 mt-0.5"></i>
+                        <span>النظام يُحدّث أسعار الكراتين والوحدات الصغرى تلقائياً بمجرد إدخال سعر البيع.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <button onclick="saveData()" class="h-14 bg-green-700 hover:bg-green-800 text-white font-bold text-lg rounded btn-3d active:bg-green-900 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> حفظ وتحديث قاعدة البيانات
+            </button>
+            <button onclick="promptPercentage(true)" class="h-14 bg-amber-600 hover:bg-amber-700 text-white font-bold text-lg rounded btn-3d active:bg-amber-800 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-arrow-trend-up"></i> تطبيق زيادة مئوية
+            </button>
+            <button onclick="promptPercentage(false)" class="h-14 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded btn-3d active:bg-red-800 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-arrow-trend-down"></i> تطبيق خصم مئوي
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let currentItemCode = null;
+        let totalStockGlobal = 0;
+
+        // قاعدة بيانات وهمية (Mock Data) لتشغيل ميزة الفحص على الـ GitHub مباشرة لغرض العرض
+        const mockDatabase = {
+            "1001": { name: "أوكسيتيتراسيكلين 20%", buy: 150, retail: 180, wholesale: 170, pcs: 10, cartons: 5, grams: 100, cms: 100, stock: 45 },
+            "1002": { name: "إيفرمكتين سوبر حقن", buy: 220, retail: 270, wholesale: 250, pcs: 12, cartons: 4, grams: 50, cms: 50, stock: 20 }
+        };
+
+        function searchItemInDB(searchTxt) {
+            // البحث عن كود أو اسم متطابق جزئياً في الـ Mock Data
+            for (let code in mockDatabase) {
+                if (code === searchTxt || mockDatabase[code].name.includes(searchTxt)) {
+                    return { code: code, ...mockDatabase[code] };
+                }
+            }
+            return null;
+        }
+
+        function searchItemMock() {
+            const searchTxt = document.getElementById('txtSearch').value.trim();
+            if (!searchTxt) return;
+
+            const item = searchItemInDB(searchTxt);
+
+            if (item) {
+                currentItemCode = item.code;
+                totalStockGlobal = item.stock;
+
+                document.getElementById('lblItemNameHeader').innerHTML = `<i class="fa-solid fa-box-open text-blue-400"></i> 📦 ${item.name} (${currentItemCode})`;
+                document.getElementById('lblStockQty').innerText = `الرصيد الفعلي الحالي: ${totalStockGlobal.toLocaleString()} وحدة`;
+
+                document.getElementById('nudBuyPrice').value = item.buy;
+                document.getElementById('nudSellRetail').value = item.retail;
+                document.getElementById('nudSellWholesale').value = item.wholesale;
+                document.getElementById('nudPiecePerCarton').value = item.pcs;
+                document.getElementById('nudCartonsPerPallet').value = item.cartons;
+                document.getElementById('nudGramsPerUnit').value = item.grams;
+                document.getElementById('nudCmPerUnit').value = item.cms;
+
+                recalculate();
+            } else {
+                alert("🔍 الصنف المطلوب غير موجود بسجلات المخزن.");
+                clearFields();
+            }
+        }
+
+        function recalculate() {
+            const buy = parseFloat(document.getElementById('nudBuyPrice').value) || 0;
+            const retail = parseFloat(document.getElementById('nudSellRetail').value) || 0;
+            const wholesale = parseFloat(document.getElementById('nudSellWholesale').value) || 0;
+            const pieces = parseFloat(document.getElementById('nudPiecePerCarton').value) || 0;
+            const cartons = parseFloat(document.getElementById('nudCartonsPerPallet').value) || 0;
+            const grams = parseFloat(document.getElementById('nudGramsPerUnit').value) || 0;
+            const cms = parseFloat(document.getElementById('nudCmPerUnit').value) || 0;
+
+            // حساب أسعار العبوات الفرعية والتجزئة
+            const cartonPrice = retail * pieces;
+            const palletPrice = cartonPrice * cartons;
+            const gramPrice = grams > 0 ? (retail / grams) : 0;
+            const sentiPrice = cms > 0 ? (retail / cms) : 0;
+
+            document.getElementById('nudCartonPrice').value = cartonPrice.toFixed(2);
+            document.getElementById('nudPalletPrice').value = palletPrice.toFixed(2);
+            document.getElementById('nudGramPrice').value = gramPrice.toFixed(2);
+            document.getElementById('nudSentiPrice').value = sentiPrice.toFixed(2);
+
+            // حساب صافي الربح وهامش الربح
+            const retailProfit = retail - buy;
+            const wholesaleProfit = wholesale - buy;
+
+            const retailMargin = retail > 0 ? ((retailProfit / retail) * 100) : 0;
+            const wholesaleMargin = wholesale > 0 ? ((wholesaleProfit / wholesale) * 100) : 0;
+
+            // تحديث نصوص الأرباح والملخص المالي
+            const profitRetailDiv = document.getElementById('lblProfitRetail');
+            profitRetailDiv.innerText = `ربح القطاعي: ${retailProfit.toFixed(2)} ج.م`;
+            profitRetailDiv.className = retailProfit >= 0 ? "font-bold text-green-700 text-sm" : "font-bold text-red-600 text-sm";
+
+            const profitWholesaleDiv = document.getElementById('lblProfitWholesale');
+            profitWholesaleDiv.innerText = `ربح الجملة: ${wholesaleProfit.toFixed(2)} ج.م`;
+            profitWholesaleDiv.className = wholesaleProfit >= 0 ? "font-bold text-purple-700 text-sm" : "font-bold text-red-600 text-sm";
+
+            document.getElementById('lblMarginRetail').innerText = `نسبة هامش القطاعي: ${retailMargin.toFixed(1)}%`;
+            document.getElementById('lblMarginWholesale').innerText = `نسبة هامش الجملة: ${wholesaleMargin.toFixed(1)}%`;
+
+            // تحديث قيمة إجمالي قيم المخزون المالي
+            document.getElementById('lblTotalStockValueBuy').innerText = `💰 القيمة الشرائية للمخزون: ${(totalStockGlobal * buy).toLocaleString('ar-EG', {minimumFractionDigits: 2})} ج.م`;
+            document.getElementById('lblTotalStockValueSell').innerText = `📈 القيمة البيعية للمخزون: ${(totalStockGlobal * retail).toLocaleString('ar-EG', {minimumFractionDigits: 2})} ج.م`;
+        }
+
+        function saveData() {
+            if (!currentItemCode) {
+                alert("يرجى تحديد صنف أولاً.");
+                return;
+            }
+            const buy = parseFloat(document.getElementById('nudBuyPrice').value) || 0;
+            const retail = parseFloat(document.getElementById('nudSellRetail').value) || 0;
+            const wholesale = parseFloat(document.getElementById('nudSellWholesale').value) || 0;
+
+            if (retail < buy || wholesale < buy) {
+                if (!confirm("⚠️ تحذير: سعر البيع أقل من الشراء! هل تريد الحفظ واستمرار العملية؟")) {
+                    return;
+                }
+            }
+            alert("💾 تم محاكاة تحديث الأسعار للصنف بنجاح وبشكل متوافق مع لوحة التحكم.");
+        }
+
+        function promptPercentage(isIncrease) {
+            if (!currentItemCode) return;
+
+            const title = isIncrease ? "أدخل النسبة المئوية للزيادة %" : "أدخل النسبة المئوية للخصم %";
+            const percentStr = prompt(title, "5");
+            const percent = parseFloat(percentStr);
+
+            if (isNaN(percent) || percent <= 0) return;
+
+            const factor = isIncrease ? (1 + (percent / 100)) : (1 - (percent / 100));
+
+            const nudSellRetail = document.getElementById('nudSellRetail');
+            const nudSellWholesale = document.getElementById('nudSellWholesale');
+
+            nudSellRetail.value = (parseFloat(nudSellRetail.value) * factor).toFixed(2);
+            nudSellWholesale.value = (parseFloat(nudSellWholesale.value) * factor).toFixed(2);
+
+            recalculate();
+        }
+
+        function clearFields() {
+            currentItemCode = null;
+            totalStockGlobal = 0;
+            document.getElementById('lblItemNameHeader').innerHTML = `<i class="fa-solid fa-box-open text-blue-400"></i> يرجى البحث لعرض الهيكل المالي...`;
+            document.getElementById('lblStockQty').innerText = "الرصيد الفعلي: 0 وحدة";
+            
+            document.getElementById('nudBuyPrice').value = "0.00";
+            document.getElementById('nudSellRetail').value = "0.00";
+            document.getElementById('nudSellWholesale').value = "0.00";
+            document.getElementById('nudCartonPrice').value = "0.00";
+            document.getElementById('nudPalletPrice').value = "0.00";
+            document.getElementById('nudGramPrice').value = "0.00";
+            document.getElementById('nudSentiPrice').value = "0.00";
+            
+            document.getElementById('nudPiecePerCarton').value = "0";
+            document.getElementById('nudCartonsPerPallet').value = "0";
+            document.getElementById('nudGramsPerUnit').value = "0";
+            document.getElementById('nudCmPerUnit').value = "0";
+
+            document.getElementById('lblProfitRetail').innerText = "ربح القطاعي: 0.00 ج.م";
+            document.getElementById('lblMarginRetail').innerText = "هامش القطاعي: 0%";
+            document.getElementById('lblProfitWholesale').innerText = "ربح الجملة: 0.00 ج.م";
+            document.getElementById('lblMarginWholesale').innerText = "هامش الجملة: 0%";
+            document.getElementById('lblTotalStockValueBuy').innerText = "💰 القيمة الشرائية للمخزون: 0.00 ج.م";
+            document.getElementById('lblTotalStockValueSell').innerText = "📈 القيمة البيعية للمخزون: 0.00 ج.م";
+        }
+
+        // تفعيل ميزة البحث بالضغط على Enter في حقل البحث
+        document.getElementById('txtSearch').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                searchItemMock();
+            }
+        });
+    </script>
+</body>
+</html>
