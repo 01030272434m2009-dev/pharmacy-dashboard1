@@ -92,7 +92,7 @@
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-bold" style="color: var(--text-muted);">اختر الصنف من القائمة:</label>
                     <select id="cbItems" class="border border-slate-300 rounded p-2 text-base outline-none bg-white" onchange="selectItem()">
-                        </select>
+                    </select>
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-bold" style="color: var(--text-muted);">كود الصنف:</label>
@@ -165,7 +165,7 @@
             
             <div class="flex flex-wrap items-center gap-6">
                 <span id="lblTotalQty" class="text-base font-bold" style="color: var(--text-dark);">📦 إجمالي الكمية: 0</span>
-                <span id="lblTotalProfit" class="text-base font-bold" style="color: var(--btn-success);">📈 المكسب المتوقع: 0.00 ج</span>
+                <span id="lblTotalProfit" class="text-base font-bold" style="color: var(--btn-success);">📈 المكسب المتوقع التقديري: 0.00 ج</span>
                 <span id="lblTotalCost" class="text-lg font-bold" style="color: var(--btn-primary);">💰 قيمة الفاتورة: 0.00 ج</span>
             </div>
 
@@ -173,14 +173,14 @@
                 <button type="button" class="btn-premium text-sm" style="background-color: var(--btn-warning);" onclick="printInvoice()">🖨 طباعة</button>
                 <button type="button" class="btn-premium text-sm" style="background-color: var(--btn-secondary);" onclick="openHistory()">📜 فواتير سابقة</button>
                 <button type="button" class="btn-premium text-sm" style="background-color: var(--btn-secondary);" onclick="importExcel()">📊 استيراد (إكسيل)</button>
-                <button type="button" class="btn-premium text-sm text-base" style="background-color: var(--btn-primary);" onclick="saveInvoice()">💾 حفظ وترحيل الفاتورة</button>
+                <button type="button" class="btn-premium text-sm" style="background-color: var(--btn-primary);" onclick="saveInvoice()">💾 حفظ وترحيل الفاتورة</button>
             </div>
         </footer>
 
     </div>
 
     <script>
-        // محاكاة قاعدة البيانات المحلية للأصناف الفريدة بنظامك لربط الكومبوبوكس تلقائياً
+        // قاعدة البيانات التجريبية المتوافقة مع نظام التكويد السباعي الرقمي المتسلسل لديك
         const localStockDatabase = [
             { code: "1000001", name: "بان تيرامايسين حقن 100 مل", buyPrice: 120.00, sellRetail: 150.00, sellWholesale: 135.00, expiryMonths: 24 },
             { code: "1000002", name: "أموكسيسيلين 50% بودرة 1 كجم", buyPrice: 450.00, sellRetail: 520.00, sellWholesale: 480.00, expiryMonths: 18 },
@@ -189,9 +189,8 @@
         ];
 
         let filteredItems = [...localStockDatabase];
-        let invoiceItems = []; // قائمة العناصر المضافة للفاتورة الحالية
+        let invoiceItems = [];
 
-        // 1. تشغيل تلقائي وتجهيز تواريخ الإنتاج الافتراضية
         window.onload = function() {
             const now = new Date();
             const year = now.getFullYear();
@@ -201,7 +200,6 @@
             refreshItemsComboBox(filteredItems);
         };
 
-        // 2. تحديث وتعبئة الكومبوبوكس الخاص بالأصناف
         function refreshItemsComboBox(sourceList) {
             const cbItems = document.getElementById('cbItems');
             cbItems.innerHTML = "";
@@ -215,14 +213,13 @@
             sourceList.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item.code;
-                opt.textContent = item.name;
+                opt.textContent = `${item.code} - ${item.name}`;
                 cbItems.appendChild(opt);
             });
 
             selectItem();
         }
 
-        // 3. البحث السريع والتصفية الفورية عند الكتابة الكود أو الاسم
         function searchItemTextChanged() {
             const keyword = document.getElementById('txtSearch').value.trim().toLowerCase();
             if (!keyword) {
@@ -235,7 +232,6 @@
             refreshItemsComboBox(filteredItems);
         }
 
-        // 4. استدعاء بيانات الصنف المختار وتوليد التشغيلة وحساب الصلاحية تلقائياً
         function selectItem() {
             const code = document.getElementById('cbItems').value;
             const item = localStockDatabase.find(i => i.code === code);
@@ -245,8 +241,6 @@
                 document.getElementById('txtBuyPrice').value = item.buyPrice.toFixed(2);
                 document.getElementById('txtSellWholesale').value = item.sellWholesale.toFixed(2);
                 document.getElementById('txtSellRetail').value = item.sellRetail.toFixed(2);
-                
-                // محاكاة توليد التشغيلة التلقائي المعتمد: B-الكود-رقم الدفعة
                 document.getElementById('txtBatch').value = `B-${item.code}-01`;
                 calculateExpiryDate();
             } else {
@@ -262,7 +256,6 @@
             document.getElementById('txtSellRetail').value = "";
         }
 
-        // 5. حساب تاريخ الانتهاء تلقائياً بناءً على أشهر صلاحية الصنف المخزنة
         function calculateExpiryDate() {
             const code = document.getElementById('cbItems').value;
             const item = localStockDatabase.find(i => i.code === code);
@@ -285,7 +278,6 @@
             }
         }
 
-        // 6. إضافة الصنف لجدول الفاتورة اللحظي والتحقق المسبق
         function addItem() {
             const code = document.getElementById('txtCode').value;
             const item = localStockDatabase.find(i => i.code === code);
@@ -308,7 +300,6 @@
                 return;
             }
 
-            // صياغة السطر المضاف للفاتورة
             const invoiceRow = {
                 id: Date.now(),
                 code: item.code,
@@ -325,13 +316,11 @@
             invoiceItems.push(invoiceRow);
             renderInvoiceGrid();
             
-            // تنظيف حقول المدخلات لتسريع العمليات المتعاقبة
             document.getElementById('txtQty').value = "";
             document.getElementById('txtSearch').value = "";
             document.getElementById('txtSearch').focus();
         }
 
-        // 7. رندر جدول الفاتورة وحساب الإجماليات الإدارية والمكاسب المتوقعة فوراً
         function renderInvoiceGrid() {
             const tbody = document.getElementById('invoiceGridBody');
             tbody.innerHTML = "";
@@ -349,6 +338,7 @@
             invoiceItems.forEach(row => {
                 totalQty += row.qty;
                 totalCost += row.total;
+                // حساب تقديري معتمد على فرق سعر القطاعي
                 totalProfit += row.qty * (row.sellRetail - row.buyPrice);
 
                 const tr = document.createElement('tr');
@@ -381,7 +371,6 @@
             document.getElementById('lblTotalProfit').textContent = `📈 المكسب المتوقع: ${profit.toFixed(2)} ج`;
         }
 
-        // 8. حفظ وترحيل الفاتورة وإصدار الكود المتسلسل تلقائياً مع تفريغ الحقول
         function saveInvoice() {
             if (invoiceItems.length === 0) {
                 alert("لا توجد أصناف مضافة لحفظ الفاتورة.");
@@ -391,34 +380,21 @@
             const warehouse = document.getElementById('cbWarehouse').value;
             const supplier = document.getElementById('txtSupplier').value.trim() || "مورد عام";
             
-            // توليد كود الفاتورة التلقائي الاحترافي المتسلسل مع الوقت الحالي
             const now = new Date();
             const timestamp = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + "-" + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0') + String(now.getSeconds()).padStart(2,'0');
-            const generatedInvoiceNo = `PUR-${timestamp}`;
+            const generatedInvoiceNo = `PUR-%D9%A2%D9%A0%D9%A2%D9%A6-${timestamp}`;
 
             alert(`✔ تم حفظ الفاتورة بنجاح بالرقم (${generatedInvoiceNo})\nالمورد: ${supplier}\nالمخزن: ${warehouse}\nتم ترحيل الأصناف وزيادة كميات المخازن سحابياً.`);
             
-            // تفريغ الفاتورة لإعداد الشاشة للمشتريات التالية
             invoiceItems = [];
             document.getElementById('txtSupplier').value = "";
             renderInvoiceGrid();
         }
 
-        // 9. الدوال الإجرائية التكميلية (أزرار التاريخ، الإكسيل والطباعة)
-        function printInvoice() {
-            alert("جاري إعداد التقرير وتحويل الفاتورة للطباعة والمعاينة...");
-        }
-
-        function openHistory() {
-            alert("جاري فتح شاشة السجل التاريخي لفحص الفواتير السابقة من قاعدة البيانات...");
-        }
-
-        function importExcel() {
-            alert("جاري تشغيل واجهة الاستيراد الذكي للأصناف والواردات من ملفات Excel...");
-        }
-
+        function printInvoice() { alert("جاري إعداد التقرير وتحويل الفاتورة للطباعة والمعاينة..."); }
+        function openHistory() { alert("جاري فتح شاشة السجل التاريخي لفحص الفواتير السابقة..."); }
+        function importExcel() { alert("جاري تشغيل واجهة الاستيراد الذكي للأصناف والواردات من ملفات Excel..."); }
         function loadWarehouseData() {
-            // منطق مخصص للتحديث الفوري للبيانات بمجرد نقل المخزن المستهدف
             const currentWh = document.getElementById('cbWarehouse').value;
             console.log(`تم تحويل عرض البيانات ومزامنتها على مخزن: ${currentWh}`);
         }
