@@ -60,14 +60,38 @@
             <div class="flex flex-wrap gap-3 text-xs">
                 <span class="px-3 py-2 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg font-semibold flex items-center gap-1.5 shadow-sm">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    خادم GitHub Pages: متصل ونشط
+                    خادم جوجل شيت: متصل ونشط
                 </span>
                 <span class="px-3 py-2 bg-blue-100 text-blue-800 border border-blue-300 rounded-lg font-semibold flex items-center gap-1.5 shadow-sm">
                     <i class="fa-solid fa-sync fa-spin"></i>
-                    مزامنة SQLite / JSON: تلقائية
+                    الربط الحركي الـ API: جاهز
                 </span>
             </div>
         </header>
+
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white border border-[#c3cbd6] p-4 rounded-xl flex items-center justify-between shadow-sm">
+                <div>
+                    <p class="text-xs text-[#6e7885] font-semibold">إجمالي الأصناف المسجلة</p>
+                    <h3 id="cloud-items-count" class="text-2xl font-bold text-[#212f3d] mt-1">جاري التحميل..</h3>
+                </div>
+                <i class="fa-solid fa-cubes text-2xl text-blue-500 bg-blue-50 p-3 rounded-lg border border-blue-100"></i>
+            </div>
+            <div class="bg-white border border-[#c3cbd6] p-4 rounded-xl flex items-center justify-between shadow-sm">
+                <div>
+                    <p class="text-xs text-[#6e7885] font-semibold">حركات المشتريات والوارد</p>
+                    <h3 id="cloud-purchases-count" class="text-2xl font-bold text-[#212f3d] mt-1">جاري التحميل..</h3>
+                </div>
+                <i class="fa-solid fa-receipt text-2xl text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-100"></i>
+            </div>
+            <div class="bg-white border border-[#c3cbd6] p-4 rounded-xl flex items-center justify-between shadow-sm">
+                <div>
+                    <p class="text-xs text-[#6e7885] font-semibold">المستخدمين الفاعلين</p>
+                    <h3 id="cloud-users-count" class="text-2xl font-bold text-[#212f3d] mt-1">جاري التحميل..</h3>
+                </div>
+                <i class="fa-solid fa-users text-2xl text-purple-600 bg-purple-50 p-3 rounded-lg border border-purple-100"></i>
+            </div>
+        </section>
 
         <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             
@@ -115,7 +139,7 @@
                     <div class="p-3 bg-amber-50 text-[#d35400] rounded-lg border border-amber-100">
                         <i class="fa-solid fa-file-invoice-dollar text-2xl"></i>
                     </div>
-                    <span class="text-xs font-bold px-2 py-1 bg-amber-50 text-[#d35400] rounded border border-amber-100">PurchaseInvoice.html</span>
+                    <span class="text-xs font-bold px-2 py-1 bg-amber-50 text-[#d35400] rounded border border-amber-100">PurchaseInvoice .html</span>
                 </div>
                 <div class="mt-4">
                     <h2 class="text-lg font-bold text-[#212f3d]">إدارة المشتريات وفواتير الوارد</h2>
@@ -182,5 +206,40 @@
         </footer>
     </div>
 
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyuuZzLIAbcpPrz1y3Gt3gcXqL7AmDEXIlcHZ4wNiAVASj1bTWWZRtBGkD8E8aNgyAguA/exec";
+
+        function fetchDashboardStats() {
+            // 1. جلب إجمالي تعداد الأصناف من جدول items
+            fetch(`${API_URL}?action=items`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.status === "SUCCESS") {
+                        document.getElementById('cloud-items-count').innerText = res.data.length + " صنف";
+                    } else { document.getElementById('cloud-items-count').innerText = "0 صنف"; }
+                }).catch(() => document.getElementById('cloud-items-count').innerText = "فشل الاتصال");
+
+            // 2. جلب إجمالي تعداد حركات الوارد من جدول purchases
+            fetch(`${API_URL}?action=purchases`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.status === "SUCCESS") {
+                        document.getElementById('cloud-purchases-count').innerText = res.data.length + " حركة";
+                    } else { document.getElementById('cloud-purchases-count').innerText = "0 حركة"; }
+                }).catch(() => document.getElementById('cloud-purchases-count').innerText = "فشل الاتصال");
+
+            // 3. جلب إجمالي تعداد المستخدمين من جدول users
+            fetch(`${API_URL}?action=users`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.status === "SUCCESS") {
+                        document.getElementById('cloud-users-count').innerText = res.data.length + " مستخدم";
+                    } else { document.getElementById('cloud-users-count').innerText = "0 مستخدم"; }
+                }).catch(() => document.getElementById('cloud-users-count').innerText = "فشل الاتصال");
+        }
+
+        // تشغيل دالة الفحص فور تحميل البوابة بالكامل
+        window.onload = fetchDashboardStats;
+    </script>
 </body>
 </html>
